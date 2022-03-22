@@ -18,7 +18,7 @@ class _WalletPageState extends State<WalletPage> {
     'Credit Card'
   ];
 
-  var _selectedStore;
+  var selectedStore = 'Wallet';
 
   void _add() {
     _cash += _number;
@@ -86,11 +86,28 @@ class _WalletPageState extends State<WalletPage> {
               ),
             ],
           ),
-          /*DropdownButton(
-            value: _selectedStore,
-            items: _moneyStores.map((String location)),
-            onChanged: ,
-          ),*/
+          DropdownButton<String>(
+            value: selectedStore,
+            icon: const Icon(Icons.all_inbox_rounded),
+            elevation: 16,
+            style: const TextStyle(fontSize: 20),
+            underline: Container(
+              height: 2,
+              color: Colors.redAccent,
+            ),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedStore = newValue!;
+              });
+            },
+            items: <String>['One', 'Two', 'Free', 'Four']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
           SizedBox(
             child: TextFormField(
               controller: _controller,

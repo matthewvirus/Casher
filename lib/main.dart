@@ -22,6 +22,7 @@ class Casher extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
+        title: 'Casher',
         home: Scaffold(
           appBar: AppBar(
             title: const Text('Casher'),
