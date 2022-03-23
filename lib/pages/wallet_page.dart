@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import './signup_page.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
@@ -14,6 +14,17 @@ class _WalletPageState extends State<WalletPage> {
   double _number = 0;
   final _controller = TextEditingController();
 
+  final CollectionReference _money = FirebaseFirestore.instance.collection('moneyStores');
+
+  Future<void> addMoney() async {
+    await _money.add(
+        {
+          'cash': _cash,
+          'card': _card
+        }
+    );
+  }
+
   final List<String> _moneyStores = [
     'Наличные',
     'Карта'
@@ -23,20 +34,39 @@ class _WalletPageState extends State<WalletPage> {
 
   void _addCash() {
     _cash += _number;
-    //print("cash $_cash");
     _controller.clear();
     _number = 0;
+    addMoney();
   }
 
   void _addCard() {
     _card += _number;
-    //print("card $_card");
     _controller.clear();
     _number = 0;
+    addMoney();
   }
 
+  void _minusCash(){
+    if (_number <= _cash) {
+      _cash -= _number;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
+    }
+    _number = 0;
+    _controller.clear();
+  }
 
-  void _whichStoreSelected() {
+  void _minusCard(){
+    if (_number <= _card) {
+      _card -= _number;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
+    }
+    _number = 0;
+    _controller.clear();
+  }
+
+  void _whichStoreSelectedToAdd() {
     switch(_selectedStore) {
       case 'Наличные':
         _addCash();
@@ -47,14 +77,15 @@ class _WalletPageState extends State<WalletPage> {
     }
   }
 
-  void _minus(){
-    if (_number <= _cash) {
-      _cash -= _number;
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
+  void _whichStoreSelectedToDelete() {
+    switch(_selectedStore) {
+      case 'Наличные':
+        _minusCash();
+        break;
+      case 'Карта':
+        _minusCard();
+        break;
     }
-    _number = 0;
-    _controller.clear();
   }
 
   void press(var value) {
@@ -94,7 +125,7 @@ class _WalletPageState extends State<WalletPage> {
                   padding: const EdgeInsets.all(10),
                   child: Text(
                     'Наличные: $_cash',
-                    style: const TextStyle(fontSize: 20),
+                    style: const TextStyle(color: Colors.black,fontSize: 20),
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.left,
                   ),
@@ -114,7 +145,7 @@ class _WalletPageState extends State<WalletPage> {
                   padding: const EdgeInsets.all(10),
                   child: Text(
                     'Карта: $_card',
-                    style: const TextStyle(fontSize: 20),
+                    style: const TextStyle(color: Colors.black,fontSize: 20),
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.left,
                   ),
@@ -165,7 +196,7 @@ class _WalletPageState extends State<WalletPage> {
                 child: MaterialButton(
                   onPressed: () {
                     setState(() {
-                      _whichStoreSelected(); // Test
+                      _whichStoreSelectedToAdd(); // Test
                     });
                   },
                   child: const Text(
@@ -180,7 +211,7 @@ class _WalletPageState extends State<WalletPage> {
                 child: MaterialButton(
                   onPressed: () {
                     setState(() {
-                      _minus();
+                      _whichStoreSelectedToDelete();
                     });
                   },
                   child: const Text(

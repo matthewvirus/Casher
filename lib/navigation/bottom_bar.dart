@@ -22,7 +22,7 @@ class BottomNavBarScreenState extends State<BottomNavBar> {
   }
 
   final List<Widget> _widgetOptions = <Widget>[
-    WalletPage(),
+    const WalletPage(),
     const CategoryPage(),
     const ProfilePage()
   ];

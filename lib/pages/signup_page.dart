@@ -1,3 +1,4 @@
+import 'package:casher/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -14,15 +15,16 @@ class _SignUpPageState extends State<SignUpPage>{
   final _sizeText = const TextStyle(fontSize: 20, color: Colors.black);
   final _sizeTextWhite = const TextStyle(fontSize: 20, color: Colors.white);
 
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  final CollectionReference _users = FirebaseFirestore.instance.collection('users');
 
   Future<void> addUser() async{
-    await users.add(
+    await _users.add(
       {
         'name': _name,
-        'surname': _surname
+        'surname': _surname,
+        'email': _email
       }
-    )/*.then((value) => print('User added!'))*/;
+    );
   }
 
   late String _email;
@@ -30,8 +32,26 @@ class _SignUpPageState extends State<SignUpPage>{
   late String _name;
   late String _surname;
 
-  void submit() async{
+  void submit() async {
     await AuthService().signUpWithEmailAndPassword(_email, _password);
+    if (!_email.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Row(
+                children: const <Widget>[
+                  Padding(padding: EdgeInsets.only(left: 2)),
+                  Icon(Icons.error, color: Colors.redAccent,),
+                  Padding(padding: EdgeInsets.only(right: 5)),
+                  Text('Неправильно введен e-mail!'),
+                ],
+              )
+          )
+      );
+    }
+    else {
+      addUser();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const Casher()));
+    }
   }
 
   @override

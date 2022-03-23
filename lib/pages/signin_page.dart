@@ -1,3 +1,4 @@
+import 'package:casher/main.dart';
 import 'package:casher/pages/signup_page.dart';
 import 'package:casher/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,22 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _signIn() async {
     await AuthService().signInWithEmailAndPassword(_email, _password);
+    if (!_email.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Row(
+              children: const <Widget>[
+                Padding(padding: EdgeInsets.only(left: 2)),
+                Icon(Icons.error, color: Colors.redAccent,),
+                Padding(padding: EdgeInsets.only(right: 5)),
+                Text('Неправильно введен e-mail!'),
+              ],
+            )
+        )
+      );
+    } else {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const Casher()));
+    }
   }
 
   @override

@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-
-import '../main.dart';
 import 'auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,8 +9,7 @@ class AuthService{
       UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       return AuthUser.fromFirebase(user);
-    } on FirebaseAuthException catch (error) {
-      print('error ${error.toString()}');
+    } on FirebaseAuthException {
       return null;
     }
   }
@@ -23,8 +19,7 @@ class AuthService{
       UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       return AuthUser.fromFirebase(user);
-    } on FirebaseAuthException catch (error) {
-      print('error ${error.toString()}');
+    } on FirebaseAuthException {
       return null;
     }
   }
