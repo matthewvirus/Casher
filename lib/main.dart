@@ -1,6 +1,9 @@
+import 'package:casher/services/auth.dart';
+import 'package:casher/services/auth_user.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:casher/navigation/bottom_bar.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,17 +23,21 @@ class Casher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Casher',
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Casher'),
-            backgroundColor: Colors.redAccent,
-            foregroundColor: Colors.white,
-          ),
-          body: const BottomNavBar(),
-        )
+    return StreamProvider<AuthUser?>.value(
+      initialData: null,
+      value: AuthService().currentUser,
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Casher',
+          home: Scaffold(
+            appBar: AppBar(
+              title: const Text('Casher'),
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
+            body: const BottomNavBar(),
+          )
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './signup_page.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
@@ -14,31 +15,66 @@ class _WalletPageState extends State<WalletPage> {
   final _controller = TextEditingController();
 
   final List<String> _moneyStores = [
-    'Wallet',
-    'Credit Card'
+    'Наличные',
+    'Карта'
   ];
 
-  var selectedStore = 'Wallet';
+  var _selectedStore = 'Наличные';
 
-  void _add() {
+  void _addCash() {
     _cash += _number;
-    print("cash $_cash");
+    //print("cash $_cash");
     _controller.clear();
+    _number = 0;
+  }
+
+  void _addCard() {
+    _card += _number;
+    //print("card $_card");
+    _controller.clear();
+    _number = 0;
+  }
+
+
+  void _whichStoreSelected() {
+    switch(_selectedStore) {
+      case 'Наличные':
+        _addCash();
+        break;
+      case 'Карта':
+        _addCard();
+        break;
+    }
   }
 
   void _minus(){
     if (_number <= _cash) {
       _cash -= _number;
     } else {
-      _cash = 0;
+      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
     }
+    _number = 0;
     _controller.clear();
   }
 
   void press(var value) {
     _number = value;
-    // print("number $_number");
   }
+
+  final _errorSnackBar = SnackBar(
+    content: Row(
+      children: const <Widget>[
+        Icon(Icons.error, color: Colors.redAccent),
+        Padding(padding: EdgeInsets.only(left: 10)),
+        Text('У вас недостаточно средств!'),
+      ],
+    ),
+    duration: const Duration(seconds: 2),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(50)),
+    ),
+    behavior: SnackBarBehavior.floating,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +123,8 @@ class _WalletPageState extends State<WalletPage> {
             ],
           ),
           DropdownButton<String>(
-            value: selectedStore,
-            icon: const Icon(Icons.all_inbox_rounded),
+            value: _selectedStore,
+            icon: const Icon(Icons.keyboard_arrow_down),
             elevation: 16,
             style: const TextStyle(fontSize: 20),
             underline: Container(
@@ -97,10 +133,10 @@ class _WalletPageState extends State<WalletPage> {
             ),
             onChanged: (String? newValue) {
               setState(() {
-                selectedStore = newValue!;
+                _selectedStore = newValue!;
               });
             },
-            items: <String>['One', 'Two', 'Free', 'Four']
+            items: _moneyStores
                 .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -129,7 +165,7 @@ class _WalletPageState extends State<WalletPage> {
                 child: MaterialButton(
                   onPressed: () {
                     setState(() {
-                      _add();
+                      _whichStoreSelected(); // Test
                     });
                   },
                   child: const Text(

@@ -1,8 +1,7 @@
-import 'package:casher/pages/signin_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+import '../services/auth.dart';
 
 class SignUpPage extends StatefulWidget{
   const SignUpPage({Key? key}) : super(key: key);
@@ -23,7 +22,7 @@ class _SignUpPageState extends State<SignUpPage>{
         'name': _name,
         'surname': _surname
       }
-    ).then((value) => print('User added!'));
+    )/*.then((value) => print('User added!'))*/;
   }
 
   late String _email;
@@ -31,19 +30,8 @@ class _SignUpPageState extends State<SignUpPage>{
   late String _name;
   late String _surname;
 
-  void submit() {
-    //try {
-      FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
-      addUser();
-    /*} catch (FirebaseAuthException) {
-      debugPrintStack(label: "Sign Up Error");
-    }
-    finally {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const RegisterPage())
-      );
-    }*/
+  void submit() async{
+    await AuthService().signUpWithEmailAndPassword(_email, _password);
   }
 
   @override

@@ -1,7 +1,5 @@
-import 'package:casher/pages/landing.dart';
 import 'package:casher/pages/signup_page.dart';
-import 'package:casher/pages/wallet_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:casher/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -20,15 +18,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final formKey = GlobalKey<FormState>();
 
-  void submit() {
-    try {
-      FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
-      //isLoggedIn = true;
-    } on FirebaseAuthException {
-      debugPrintStack(label: "Sign In error");
-    } finally {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const WalletPage()));
-    }
+  void _signIn() async {
+    await AuthService().signInWithEmailAndPassword(_email, _password);
   }
 
   @override
@@ -77,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   'Войти',
                   style: _sizeTextWhite,
                 ),
-                onPressed: submit,
+                onPressed: _signIn,
               ),
             ),
             Row(
@@ -92,7 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SignUpPage()
+                          builder: (context) => const SignUpPage()
                       ),
                     );
                   },
