@@ -32,8 +32,8 @@ class Casher extends StatelessWidget {
           home: Scaffold(
             appBar: AppBar(
               title: const Text('Casher'),
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.deepPurpleAccent,
             ),
             body: const BottomNavBar(),
           )

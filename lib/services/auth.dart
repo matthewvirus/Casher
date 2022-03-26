@@ -1,3 +1,5 @@
+import 'package:casher/pages/signup_page.dart';
+
 import 'auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,6 +10,7 @@ class AuthService{
     try {
       UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+      firebaseUser = user;
       return AuthUser.fromFirebase(user);
     } on FirebaseAuthException {
       return null;
@@ -18,6 +21,7 @@ class AuthService{
     try {
       UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+      firebaseUser = user;
       return AuthUser.fromFirebase(user);
     } on FirebaseAuthException {
       return null;
@@ -26,6 +30,7 @@ class AuthService{
 
   Future logOut() async {
     await _firebaseAuth.signOut();
+    firebaseUser?.refreshToken;
   }
 
   Stream<AuthUser?> get currentUser {

@@ -1,6 +1,9 @@
 import 'package:casher/pages/signin_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../pages/signup_page.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -10,10 +13,29 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  static const _profileTextStyle = TextStyle(fontSize: 20, color: Colors.black);
 
-  final String _name = '';
-  final String _surname = '';
-  final String _email = '';
+  late String _name = '';
+  late String _surname = '';
+  late String _email = '';
+
+  DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(firebaseUser?.uid.toString());
+
+  Future _getInfo() async{
+    await docRef.get().then((snapshot) {
+      setState(() {
+        _name = snapshot['name'];
+        _surname = snapshot['surname'];
+        _email = snapshot['email'];
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getInfo();
+  }
 
   void _logOut() async {
     await FirebaseAuth.instance.signOut()
@@ -29,25 +51,38 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            Text('Имя $_name'),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            Text('Фамилия $_surname'),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            Text('E-mail $_email'),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            MaterialButton(
-                onPressed: _logOut,
-                color: Colors.redAccent,
-                child: const Text('Выйти'),
-            ),
-          ],
-        ),
-      ),
+      body: buildItems()
     );
   }
+
+  Widget buildItems() => Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text('Имя: $_name', style: _profileTextStyle,),
+        const Padding(padding: EdgeInsets.only(top: 5)),
+        Text('Фамилия: $_surname', style: _profileTextStyle,),
+        const Padding(padding: EdgeInsets.only(top: 5)),
+        Text('Почта: $_email', style: _profileTextStyle,),
+        const Padding(padding: EdgeInsets.only(top: 5)),
+        MaterialButton(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))
+          ),
+          onPressed: _logOut,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const <Widget>[
+              Icon(Icons.exit_to_app_rounded, color: Colors.white,),
+              Text(
+                'Выйти',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+            ],
+          ),
+          color: Colors.deepPurpleAccent,
+        ),
+      ],
+    ),
+  );
 }

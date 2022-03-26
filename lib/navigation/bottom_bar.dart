@@ -47,9 +47,9 @@ class BottomNavBarScreenState extends State<BottomNavBar> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.white,
-        backgroundColor: Colors.redAccent,
+        selectedItemColor: Colors.deepPurpleAccent,
+        unselectedItemColor: Colors.black,
+        backgroundColor: Colors.white,
         onTap: _onItemTapped,
       ),
     );

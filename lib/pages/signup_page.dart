@@ -1,4 +1,5 @@
 import 'package:casher/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,18 +12,21 @@ class SignUpPage extends StatefulWidget{
   State<StatefulWidget> createState() => _SignUpPageState();
 }
 
+var firebaseUser = FirebaseAuth.instance.currentUser;
+
 class _SignUpPageState extends State<SignUpPage>{
   final _sizeText = const TextStyle(fontSize: 20, color: Colors.black);
   final _sizeTextWhite = const TextStyle(fontSize: 20, color: Colors.white);
-
-  final CollectionReference _users = FirebaseFirestore.instance.collection('users');
-
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
   Future<void> addUser() async{
-    await _users.add(
+    await users.doc(firebaseUser?.uid.toString()).set(
       {
         'name': _name,
         'surname': _surname,
-        'email': _email
+        'email': _email,
+        'cash': 0,
+        'card': 0,
+        'uid': firebaseUser?.uid.toString()
       }
     );
   }
@@ -60,8 +64,8 @@ class _SignUpPageState extends State<SignUpPage>{
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('Регистрация'),
-        backgroundColor: Colors.redAccent,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.deepPurpleAccent,
       ),
       body: Center(
         child: Column(
@@ -124,7 +128,7 @@ class _SignUpPageState extends State<SignUpPage>{
             Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 10),
               child: MaterialButton(
-                color: Colors.redAccent,
+                color: Colors.deepPurpleAccent,
                 height: 50,
                 minWidth: 150,
                 child: Text(

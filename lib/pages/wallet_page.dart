@@ -1,3 +1,4 @@
+import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -9,20 +10,35 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
-  double _cash = 0;
-  double _card = 0;
+  late double _cash;
+  late double _card;
   double _number = 0;
   final _controller = TextEditingController();
 
-  final CollectionReference _money = FirebaseFirestore.instance.collection('moneyStores');
-
-  Future<void> addMoney() async {
-    await _money.add(
-        {
-          'cash': _cash,
-          'card': _card
-        }
+  DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(firebaseUser?.uid.toString());
+  Future<void> _updateMoney() async {
+    await docRef.update(
+      {
+        "cash": _cash.round(),
+        "card": _card.round()
+      }
     );
+  }
+
+  Future<void> _getInfo() async {
+    await docRef.get().then((snapshot){
+      setState(() {
+        _cash = snapshot['cash'];
+        _card = snapshot['card'];
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getInfo();
+    _updateMoney();
   }
 
   final List<String> _moneyStores = [
@@ -32,23 +48,24 @@ class _WalletPageState extends State<WalletPage> {
 
   var _selectedStore = 'Наличные';
 
-  void _addCash() {
+  void _addCash() async{
     _cash += _number;
     _controller.clear();
     _number = 0;
-    addMoney();
+    await _updateMoney();
   }
 
-  void _addCard() {
+  void _addCard() async{
     _card += _number;
     _controller.clear();
     _number = 0;
-    addMoney();
+    await _updateMoney();
   }
 
-  void _minusCash(){
+  void _minusCash() async{
     if (_number <= _cash) {
       _cash -= _number;
+      await _updateMoney();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
     }
@@ -56,9 +73,10 @@ class _WalletPageState extends State<WalletPage> {
     _controller.clear();
   }
 
-  void _minusCard(){
+  void _minusCard() async{
     if (_number <= _card) {
       _card -= _number;
+      await _updateMoney();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
     }
@@ -124,7 +142,7 @@ class _WalletPageState extends State<WalletPage> {
                   alignment: Alignment.topLeft,
                   padding: const EdgeInsets.all(10),
                   child: Text(
-                    'Наличные: $_cash',
+                    'Наличные: ${_cash.toString()}',
                     style: const TextStyle(color: Colors.black,fontSize: 20),
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.left,
@@ -144,7 +162,7 @@ class _WalletPageState extends State<WalletPage> {
                   alignment: Alignment.topLeft,
                   padding: const EdgeInsets.all(10),
                   child: Text(
-                    'Карта: $_card',
+                    'Карта: ${_card.toString()}',
                     style: const TextStyle(color: Colors.black,fontSize: 20),
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.left,
@@ -160,7 +178,7 @@ class _WalletPageState extends State<WalletPage> {
             style: const TextStyle(fontSize: 20),
             underline: Container(
               height: 2,
-              color: Colors.redAccent,
+              color: Colors.deepPurpleAccent,
             ),
             onChanged: (String? newValue) {
               setState(() {
@@ -203,7 +221,7 @@ class _WalletPageState extends State<WalletPage> {
                     'Добавить',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
-                  color: Colors.redAccent,
+                  color: Colors.deepPurpleAccent,
                 ),
               ),
               Padding(
@@ -218,7 +236,7 @@ class _WalletPageState extends State<WalletPage> {
                     'Отнять',
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
-                  color: Colors.redAccent,
+                  color: Colors.deepPurpleAccent,
                 ),
               ),
             ],
@@ -227,4 +245,13 @@ class _WalletPageState extends State<WalletPage> {
       )
     );
   }
+
+
+  /*Widget loading(BuildContext context) {
+    while (_cash == null && _card == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+  }*/
 }

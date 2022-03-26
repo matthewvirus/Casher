@@ -78,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 10),
               child: MaterialButton(
-                color: Colors.redAccent,
+                color: Colors.deepPurpleAccent,
                 height: 50,
                 minWidth: 150,
                 child: Text(
@@ -108,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     'Зарегистрируйтесь!',
                     style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
                   ),
-                )
+                ),
               ],
             )
           ],
