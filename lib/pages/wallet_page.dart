@@ -19,8 +19,8 @@ class _WalletPageState extends State<WalletPage> {
   Future<void> _updateMoney() async {
     await docRef.update(
       {
-        "cash": _cash.round(),
-        "card": _card.round()
+        "cash": _cash,
+        "card": _card
       }
     );
   }

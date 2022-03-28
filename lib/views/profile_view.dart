@@ -1,6 +1,7 @@
 import 'package:casher/pages/signin_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../pages/signup_page.dart';
@@ -42,7 +43,7 @@ class _ProfileViewState extends State<ProfileView> {
       .then((value) {
         Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const RegisterPage())
+            CupertinoPageRoute(builder: (context) => const RegisterPage())
         );
       }
     );
