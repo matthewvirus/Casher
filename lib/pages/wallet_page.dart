@@ -11,12 +11,12 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
-  late double _cash;
-  late double _card;
-  late double _other;
-  late double _food;
-  late double _clothes;
-  late double _supplies;
+  late double _cash = 0;
+  late double _card = 0;
+  late double _other = 0;
+  late double _food = 0;
+  late double _clothes = 0;
+  late double _supplies = 0;
   late TooltipBehavior _toolTipBehavior;
   late List<ExpenseData> _chartData;
 
@@ -60,6 +60,7 @@ class _WalletPageState extends State<WalletPage> {
     return chartData;
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -100,6 +101,8 @@ class _WalletPageState extends State<WalletPage> {
   void _minusCash() async{
     if (_number <= _cash) {
       _cash -= _number;
+      _whichCategorySelected();
+      _controller.clear();
       await _updateMoney();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
@@ -111,6 +114,8 @@ class _WalletPageState extends State<WalletPage> {
   void _minusCard() async{
     if (_number <= _card) {
       _card -= _number;
+      _whichCategorySelected();
+      _controller.clear();
       await _updateMoney();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
@@ -134,11 +139,9 @@ class _WalletPageState extends State<WalletPage> {
     switch(_selectedStore) {
       case 'Наличные':
         _minusCash();
-        _whichCategorySelected();
         break;
       case 'Карта':
         _minusCard();
-        _whichCategorySelected();
         break;
     }
   }
@@ -297,7 +300,6 @@ class _WalletPageState extends State<WalletPage> {
                 elevation: 16,
                 style: const TextStyle(fontSize: 20, color: Colors.black),
                 underline: Container(
-                  //Three hundred bucks
                   height: 2,
                   color: Colors.deepPurpleAccent,
                 ),
@@ -337,7 +339,7 @@ class _WalletPageState extends State<WalletPage> {
                 child: MaterialButton(
                   onPressed: () {
                     setState(() {
-                      _whichStoreSelectedToAdd(); // Test
+                      _whichStoreSelectedToAdd();
                     });
                   },
                   child: const Text(
@@ -371,9 +373,8 @@ class _WalletPageState extends State<WalletPage> {
             series: <CircularSeries>[
               PieSeries<ExpenseData, String>(
                 dataSource: _chartData,
-                xValueMapper: (ExpenseData data,_) => data.name + ' ${data.expense}',
+                xValueMapper: (ExpenseData data,_) => data.name,
                 yValueMapper: (ExpenseData data,_) => data.expense,
-                //dataLabelSettings: const DataLabelSettings(isVisible: true, ),
               ),
             ],
           ),
