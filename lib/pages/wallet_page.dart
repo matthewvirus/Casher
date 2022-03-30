@@ -1,6 +1,7 @@
 import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
@@ -12,41 +13,75 @@ class WalletPage extends StatefulWidget {
 class _WalletPageState extends State<WalletPage> {
   late double _cash;
   late double _card;
+  late double _other;
+  late double _food;
+  late double _clothes;
+  late double _supplies;
+  late TooltipBehavior _toolTipBehavior;
+  late List<ExpenseData> _chartData;
+
   double _number = 0;
+
   final _controller = TextEditingController();
 
   DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(firebaseUser?.uid.toString());
   Future<void> _updateMoney() async {
-    await docRef.update(
+    await docRef.update (
       {
         "cash": _cash,
-        "card": _card
+        "card": _card,
+        "other": _other,
+        "food": _food,
+        "clothes": _clothes,
+        "supplies": _supplies
       }
     );
   }
-
   Future<void> _getInfo() async {
     await docRef.get().then((snapshot){
       setState(() {
         _cash = snapshot['cash'];
         _card = snapshot['card'];
+        _other = snapshot['other'];
+        _food = snapshot['food'];
+        _clothes = snapshot['clothes'];
+        _supplies = snapshot['supplies'];
       });
     });
+  }
+
+  List<ExpenseData> getExpenseData() {
+    final List<ExpenseData> chartData = [
+      ExpenseData('Продукты', _food),
+      ExpenseData('Одежда', _clothes),
+      ExpenseData('Коммунальные расходы', _supplies),
+      ExpenseData('Прочие расходы', _other)
+    ];
+    return chartData;
   }
 
   @override
   void initState() {
     super.initState();
+    _chartData = getExpenseData();
     _getInfo();
     _updateMoney();
+    _toolTipBehavior = TooltipBehavior(enable: true);
   }
 
   final List<String> _moneyStores = [
     'Наличные',
     'Карта'
   ];
-
   var _selectedStore = 'Наличные';
+
+  final List<String> _categories = [
+    'Продукты',
+    'Одежда',
+    'Коммунальные расходы',
+    'Прочие расходы'
+  ];
+  var _selectedCategory = 'Продукты';
 
   void _addCash() async{
     _cash += _number;
@@ -99,9 +134,68 @@ class _WalletPageState extends State<WalletPage> {
     switch(_selectedStore) {
       case 'Наличные':
         _minusCash();
+        _whichCategorySelected();
         break;
       case 'Карта':
         _minusCard();
+        _whichCategorySelected();
+        break;
+    }
+  }
+
+  double _setOtherExpense() {
+    _other += _number;
+    setState(() {
+      _chartData = <ExpenseData>[];
+      _chartData = getExpenseData();
+    });
+    return _other;
+  }
+
+  double _setFoodExpense() {
+    _food += _number;
+    setState(() {
+      _chartData = <ExpenseData>[];
+      _chartData = getExpenseData();
+    });
+    return _food;
+  }
+
+  double _setClothesExpense() {
+    _clothes += _number;
+    setState(() {
+      _chartData = <ExpenseData>[];
+      _chartData = getExpenseData();
+    });
+    return _clothes;
+  }
+
+  double _setSuppliesExpense() {
+    _supplies += _number;
+    setState(() {
+      _chartData = <ExpenseData>[];
+      _chartData = getExpenseData();
+    });
+    return _supplies;
+  }
+
+  void _whichCategorySelected() async {
+    switch(_selectedCategory) {
+      case 'Прочие расходы':
+        _setOtherExpense();
+        await _updateMoney();
+        break;
+      case 'Продукты':
+        _setFoodExpense();
+        await _updateMoney();
+        break;
+      case 'Одежда':
+        _setClothesExpense();
+        await _updateMoney();
+        break;
+      case 'Коммунальные расходы':
+        _setSuppliesExpense();
+        await _updateMoney();
         break;
     }
   }
@@ -171,27 +265,56 @@ class _WalletPageState extends State<WalletPage> {
               ),
             ],
           ),
-          DropdownButton<String>(
-            value: _selectedStore,
-            icon: const Icon(Icons.keyboard_arrow_down),
-            elevation: 16,
-            style: const TextStyle(fontSize: 20),
-            underline: Container(
-              height: 2,
-              color: Colors.deepPurpleAccent,
-            ),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedStore = newValue!;
-              });
-            },
-            items: _moneyStores
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              DropdownButton<String>(
+                value: _selectedStore,
+                icon: const Icon(Icons.keyboard_arrow_down),
+                elevation: 16,
+                style: const TextStyle(fontSize: 20, color: Colors.black),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedStore = newValue!;
+                  });
+                },
+                items: _moneyStores
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              const Padding(padding: EdgeInsets.only(left: 10)),
+              DropdownButton<String>(
+                value: _selectedCategory,
+                icon: const Icon(Icons.keyboard_arrow_down),
+                elevation: 16,
+                style: const TextStyle(fontSize: 20, color: Colors.black),
+                underline: Container(
+                  //Three hundred bucks
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedCategory = newValue!;
+                  });
+                },
+                items: _categories
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
           SizedBox(
             child: TextFormField(
@@ -241,17 +364,27 @@ class _WalletPageState extends State<WalletPage> {
               ),
             ],
           ),
+          SfCircularChart(
+            title: ChartTitle(text: 'Расходы'),
+            tooltipBehavior: _toolTipBehavior,
+            legend: Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+            series: <CircularSeries>[
+              PieSeries<ExpenseData, String>(
+                dataSource: _chartData,
+                xValueMapper: (ExpenseData data,_) => data.name + ' ${data.expense}',
+                yValueMapper: (ExpenseData data,_) => data.expense,
+                //dataLabelSettings: const DataLabelSettings(isVisible: true, ),
+              ),
+            ],
+          ),
         ],
       )
     );
   }
+}
 
-
-  /*Widget loading(BuildContext context) {
-    while (_cash == null && _card == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-  }*/
+class ExpenseData {
+  ExpenseData(this.name, this.expense);
+  final String name;
+  late double? expense;
 }
