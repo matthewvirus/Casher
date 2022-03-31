@@ -16,19 +16,27 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   static const _profileTextStyle = TextStyle(fontSize: 20, color: Colors.black);
 
-  late String _name = '';
-  late String _surname = '';
-  late String _email = '';
+  late String _name;
+  late String _surname;
+  late String _email;
+
+  bool _isLoading = false;
 
   DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(firebaseUser?.uid.toString());
 
   Future _getInfo() async{
+    setState(() {
+      _isLoading = true;
+    });
     await docRef.get().then((snapshot) {
       setState(() {
         _name = snapshot['name'];
         _surname = snapshot['surname'];
         _email = snapshot['email'];
       });
+    });
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -56,8 +64,14 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
+  Widget circularBar() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
   Widget buildItems() => Center(
-    child: Column(
+    child: _isLoading? circularBar(): Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text('Имя: $_name', style: _profileTextStyle,),

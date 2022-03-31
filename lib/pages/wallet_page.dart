@@ -11,14 +11,16 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
-  late double _cash = 0;
-  late double _card = 0;
+  late double _cash;
+  late double _card;
   late double _other = 0;
   late double _food = 0;
   late double _clothes = 0;
   late double _supplies = 0;
   late TooltipBehavior _toolTipBehavior;
   late List<ExpenseData> _chartData;
+
+  bool _isLoading = false;
 
   double _number = 0;
 
@@ -38,6 +40,9 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
   Future<void> _getInfo() async {
+    setState(() {
+      _isLoading = true;
+    });
     await docRef.get().then((snapshot){
       setState(() {
         _cash = snapshot['cash'];
@@ -47,6 +52,9 @@ class _WalletPageState extends State<WalletPage> {
         _clothes = snapshot['clothes'];
         _supplies = snapshot['supplies'];
       });
+    });
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -60,14 +68,13 @@ class _WalletPageState extends State<WalletPage> {
     return chartData;
   }
 
-
   @override
   void initState() {
-    super.initState();
-    _chartData = getExpenseData();
     _getInfo();
     _updateMoney();
+    _chartData = getExpenseData();
     _toolTipBehavior = TooltipBehavior(enable: true);
+    super.initState();
   }
 
   final List<String> _moneyStores = [
@@ -222,10 +229,16 @@ class _WalletPageState extends State<WalletPage> {
     behavior: SnackBarBehavior.floating,
   );
 
+  Widget circularBar() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: _isLoading? circularBar(): Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Row(
@@ -379,7 +392,7 @@ class _WalletPageState extends State<WalletPage> {
             ],
           ),
         ],
-      )
+      ),
     );
   }
 }
