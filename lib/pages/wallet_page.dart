@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -51,10 +53,8 @@ class _WalletPageState extends State<WalletPage> {
         _food = snapshot['food'];
         _clothes = snapshot['clothes'];
         _supplies = snapshot['supplies'];
+        _isLoading = false;
       });
-    });
-    setState(() {
-      _isLoading = false;
     });
   }
 
@@ -333,7 +333,12 @@ class _WalletPageState extends State<WalletPage> {
           ),
           SizedBox(
             child: TextFormField(
+              textAlign: TextAlign.center,
               controller: _controller,
+              /*decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),*/
+              cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
@@ -379,7 +384,7 @@ class _WalletPageState extends State<WalletPage> {
               ),
             ],
           ),
-          SfCircularChart(
+          /*SfCircularChart(
             title: ChartTitle(text: 'Расходы'),
             tooltipBehavior: _toolTipBehavior,
             legend: Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
@@ -390,7 +395,88 @@ class _WalletPageState extends State<WalletPage> {
                 yValueMapper: (ExpenseData data,_) => data.expense,
               ),
             ],
-          ),
+          ),*/
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+            decoration: BoxDecoration(
+              boxShadow: const [
+                BoxShadow(
+                    blurRadius: 5, color: Colors.red, offset: Offset(0,5)
+                )
+              ],
+              borderRadius: BorderRadius.circular(15),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFFFFAFBD),
+                  Color(0xFFFFC3A0),
+                ],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(height: 32),
+                  Row(
+                    children: const [
+                      SizedBox(
+                        height: 32,
+                        width: 178,
+                      ),
+                      Text(
+                        'Баланс',
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Image.asset(
+                          "assets/images/card/chip.png"
+                      ),
+                      const SizedBox(
+                        width: 116,
+                      ),
+                      Text(
+                        '${_card.toString()} BYN',
+                        style: const TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      const SizedBox(
+                        width: 316,
+                      ),
+                      Image.asset("assets/images/card/card_operator.png"),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: const <Widget>[
+                      SizedBox(
+                        width: 306,
+                      ),
+                      Text(
+                        'Wallet card',
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );

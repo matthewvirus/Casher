@@ -1,4 +1,4 @@
-import 'package:casher/pages/signin_page.dart';
+import 'package:casher/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -51,7 +51,7 @@ class _ProfileViewState extends State<ProfileView> {
       .then((value) {
         Navigator.push(
             context,
-            CupertinoPageRoute(builder: (context) => const RegisterPage())
+            CupertinoPageRoute(builder: (context) => const Casher())
         );
       }
     );
@@ -80,22 +80,18 @@ class _ProfileViewState extends State<ProfileView> {
         const Padding(padding: EdgeInsets.only(top: 5)),
         Text('Почта: $_email', style: _profileTextStyle,),
         const Padding(padding: EdgeInsets.only(top: 5)),
-        MaterialButton(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10))
-          ),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.logout),
+          label: const Text('Выйти'),
           onPressed: _logOut,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
-              Icon(Icons.exit_to_app_rounded, color: Colors.white,),
-              Text(
-                'Выйти',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-            ],
+          style: ElevatedButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 15),
+            primary: Colors.deepPurpleAccent,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            minimumSize: const Size(100, 50)
           ),
-          color: Colors.deepPurpleAccent,
         ),
       ],
     ),

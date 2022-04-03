@@ -16,7 +16,8 @@ var firebaseUser = FirebaseAuth.instance.currentUser;
 
 class _SignUpPageState extends State<SignUpPage>{
   final _sizeText = const TextStyle(fontSize: 20, color: Colors.black);
-  final _sizeTextWhite = const TextStyle(fontSize: 20, color: Colors.white);
+
+  bool _passwordVisibility = true;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   Future<void> addUser() async{
     await users.doc(firebaseUser?.uid.toString()).set(
@@ -26,7 +27,11 @@ class _SignUpPageState extends State<SignUpPage>{
         'email': _email,
         'cash': 0,
         'card': 0,
-        'uid': firebaseUser?.uid.toString()
+        'uid': firebaseUser?.uid.toString(),
+        'food': 0,
+        'clothes': 0,
+        'supplies': 0,
+        'other': 0
       }
     );
   }
@@ -71,9 +76,18 @@ class _SignUpPageState extends State<SignUpPage>{
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image.asset("assets/images/casher_logo.jpg", width: 350, height: 100,),
             SizedBox(
               child: TextFormField(
                 decoration: const InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                  ),
+                  prefixIcon: Icon(Icons.account_circle),
                   hintText: 'Имя',
                 ),
                 keyboardType: TextInputType.name,
@@ -84,9 +98,18 @@ class _SignUpPageState extends State<SignUpPage>{
               ),
               width: 400,
             ),
+            const Padding(padding: EdgeInsets.only(top: 16)),
             SizedBox(
               child: TextFormField(
                 decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.supervised_user_circle),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                  ),
                   hintText: 'Фамилия',
                 ),
                 keyboardType: TextInputType.name,
@@ -97,11 +120,19 @@ class _SignUpPageState extends State<SignUpPage>{
               ),
               width: 400,
             ),
+            const Padding(padding: EdgeInsets.only(top: 16)),
             SizedBox(
               child: TextFormField(
                 decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.email),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                  ),
                   hintText: 'Email',
-                  helperText: 'Введите адрес электронной почты',
                 ),
                 //keyboardType: TextInputType.emailAddress,
                 style: _sizeText,
@@ -111,13 +142,33 @@ class _SignUpPageState extends State<SignUpPage>{
               ),
               width: 400,
             ),
+            const Padding(padding: EdgeInsets.only(top: 16)),
             SizedBox(
               child: TextFormField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        _passwordVisibility
+                            ? Icons.visibility
+                            : Icons.visibility_off
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisibility = !_passwordVisibility;
+                      });
+                    },
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                  ),
                   hintText: 'Пароль',
-                  helperText: 'Введите пароль',
                 ),
-                obscureText: true,
+                obscureText: _passwordVisibility,
                 style: _sizeText,
                 onChanged: (text) {
                   _password = text;
@@ -127,15 +178,18 @@ class _SignUpPageState extends State<SignUpPage>{
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 10),
-              child: MaterialButton(
-                color: Colors.deepPurpleAccent,
-                height: 50,
-                minWidth: 150,
-                child: Text(
-                  'Зарегистрироваться',
-                  style: _sizeTextWhite,
-                ),
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.login),
+                label: const Text('Зарегистрироваться'),
                 onPressed: submit,
+                style: ElevatedButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 15),
+                  primary: Colors.deepPurpleAccent,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  minimumSize: const Size(100, 50)
+                ),
               ),
             ),
           ],
