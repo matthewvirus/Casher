@@ -29,9 +29,11 @@ class Casher extends StatelessWidget {
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Casher',
+          theme: ThemeData(fontFamily: 'Raleway'),
           home: Scaffold(
             appBar: AppBar(
-              title: const Text('Casher'),
+              elevation: 0,
+              title: const Text('Casher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
               centerTitle: true,
               backgroundColor: Colors.white,
               foregroundColor: Colors.deepPurpleAccent,

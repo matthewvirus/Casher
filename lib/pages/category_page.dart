@@ -6,6 +6,7 @@ class CategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      backgroundColor: const Color(0xFFE7E1F1),
       body: Center(
           child: Text('Category Page')
       ),

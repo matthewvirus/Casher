@@ -60,7 +60,8 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: buildItems()
+        backgroundColor: const Color(0xFFE7E1F1),
+        body: buildItems()
     );
   }
 

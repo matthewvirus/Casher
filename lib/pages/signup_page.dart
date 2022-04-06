@@ -66,8 +66,10 @@ class _SignUpPageState extends State<SignUpPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE7E1F1),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        elevation: 0,
         title: const Text('Регистрация'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.deepPurpleAccent,
@@ -76,7 +78,7 @@ class _SignUpPageState extends State<SignUpPage>{
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset("assets/images/casher_logo.jpg", width: 350, height: 100,),
+            Image.asset("assets/images/casher.png", width: 350, height: 100,),
             SizedBox(
               child: TextFormField(
                 decoration: const InputDecoration(

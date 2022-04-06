@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +27,7 @@ class _WalletPageState extends State<WalletPage> {
   final _controller = TextEditingController();
 
   DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(firebaseUser?.uid.toString());
+
   Future<void> _updateMoney() async {
     await docRef.update (
       {
@@ -102,6 +101,9 @@ class _WalletPageState extends State<WalletPage> {
     _card += _number;
     _controller.clear();
     _number = 0;
+    setState(() {
+
+    });
     await _updateMoney();
   }
 
@@ -238,44 +240,140 @@ class _WalletPageState extends State<WalletPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE7E1F1),
       body: _isLoading? circularBar(): Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Icon(
-                Icons.attach_money,
-              ),
-              SizedBox(
+              Flexible(
                 child: Container(
-                  alignment: Alignment.topLeft,
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    'Наличные: ${_cash.toString()}',
-                    style: const TextStyle(color: Colors.black,fontSize: 20),
-                    textDirection: TextDirection.ltr,
-                    textAlign: TextAlign.left,
+                  margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                  decoration: BoxDecoration(
+                    boxShadow: const [
+                      BoxShadow(
+                          blurRadius: 10, color: Color(0xA0028326), offset: Offset(0,4)
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(15),
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFDBD5A4),
+                        Color(0xFF649173),
+                      ],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Image.asset("assets/images/banknote/dollar.png"),
+                          ]
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                const Text('Баланс', style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
+                                Text('${_cash.toString()} BYN', style: const TextStyle(fontSize: 28, fontFamily: 'Raleway', fontWeight: FontWeight.bold))
+                              ],
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Image.asset("assets/images/banknote/dollar.png"),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Icon(
-                Icons.credit_card,
-              ),
-              SizedBox(
+              Flexible(
                 child: Container(
-                  alignment: Alignment.topLeft,
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    'Карта: ${_card.toString()}',
-                    style: const TextStyle(color: Colors.black,fontSize: 20),
-                    textDirection: TextDirection.ltr,
-                    textAlign: TextAlign.left,
+                  margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                  decoration: BoxDecoration(
+                    boxShadow: const [
+                      BoxShadow(
+                          blurRadius: 10, color: Color(0xA0FF0000), offset: Offset(0,4)
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(15),
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFFFAFBD),
+                        Color(0xFFFFC3A0),
+                      ],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Image.asset(
+                              "assets/images/card/chip.png",
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                const Text(
+                                  'Баланс',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 20, color: Colors.black, fontFamily: 'Raleway'),
+                                ),
+                                Text(
+                                  '${_card.toString()} BYN',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontFamily: 'Raleway', fontSize: 28, color: Colors.black, fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Image.asset("assets/images/card/card_operator.png"),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: const <Widget>[
+                            Text(
+                              'Instant card',
+                              style: TextStyle(fontSize: 20, color: Colors.black, fontFamily: 'Raleway'),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -335,9 +433,6 @@ class _WalletPageState extends State<WalletPage> {
             child: TextFormField(
               textAlign: TextAlign.center,
               controller: _controller,
-              /*decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-              ),*/
               cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -384,99 +479,6 @@ class _WalletPageState extends State<WalletPage> {
               ),
             ],
           ),
-          /*SfCircularChart(
-            title: ChartTitle(text: 'Расходы'),
-            tooltipBehavior: _toolTipBehavior,
-            legend: Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
-            series: <CircularSeries>[
-              PieSeries<ExpenseData, String>(
-                dataSource: _chartData,
-                xValueMapper: (ExpenseData data,_) => data.name,
-                yValueMapper: (ExpenseData data,_) => data.expense,
-              ),
-            ],
-          ),*/
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-            decoration: BoxDecoration(
-              boxShadow: const [
-                BoxShadow(
-                    blurRadius: 5, color: Colors.red, offset: Offset(0,5)
-                )
-              ],
-              borderRadius: BorderRadius.circular(15),
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFFFAFBD),
-                  Color(0xFFFFC3A0),
-                ],
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(height: 32),
-                  Row(
-                    children: const [
-                      SizedBox(
-                        height: 32,
-                        width: 178,
-                      ),
-                      Text(
-                        'Баланс',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Image.asset(
-                          "assets/images/card/chip.png"
-                      ),
-                      const SizedBox(
-                        width: 116,
-                      ),
-                      Text(
-                        '${_card.toString()} BYN',
-                        style: const TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      const SizedBox(
-                        width: 316,
-                      ),
-                      Image.asset("assets/images/card/card_operator.png"),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: const <Widget>[
-                      SizedBox(
-                        width: 306,
-                      ),
-                      Text(
-                        'Wallet card',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          )
         ],
       ),
     );

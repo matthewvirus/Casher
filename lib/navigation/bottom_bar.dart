@@ -32,6 +32,7 @@ class BottomNavBarScreenState extends State<BottomNavBar> {
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.account_balance_wallet),

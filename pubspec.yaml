@@ -31,6 +31,7 @@ dependencies:
     sdk: flutter
   auto_route: ^3.2.4
   salomon_bottom_bar: ^3.2.0
+  sizer: ^2.0.15
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -66,11 +67,18 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Raleway-Regular.ttf
+        - asset: assets/fonts/Raleway-SemiBold.ttf
+
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/casher_logo.jpg
+    - assets/images/casher.png
     - assets/images/card/chip.png
     - assets/images/card/card_operator.png
+    - assets/images/banknote/dollar.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
