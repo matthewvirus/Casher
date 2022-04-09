@@ -1,3 +1,4 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:casher/services/auth.dart';
 import 'package:casher/services/auth_user.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,16 +31,19 @@ class Casher extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Casher',
           theme: ThemeData(fontFamily: 'Raleway'),
-          home: Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              title: const Text('Casher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
-              centerTitle: true,
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.deepPurpleAccent,
+          home: AnimatedSplashScreen(
+            splash: Image.asset("assets/images/splash.jpg"),
+            nextScreen: Scaffold(
+              appBar: AppBar(
+                elevation: 0,
+                title: const Text('Casher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
+                centerTitle: true,
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.deepPurpleAccent,
+              ),
+              body: const BottomNavBar(),
             ),
-            body: const BottomNavBar(),
-          )
+          ),
       ),
     );
   }
