@@ -17,6 +17,11 @@ var firebaseUser = FirebaseAuth.instance.currentUser;
 class _SignUpPageState extends State<SignUpPage>{
   final _sizeText = const TextStyle(fontSize: 20, color: Colors.black);
 
+  late String _email;
+  late String _password;
+  late String _name;
+  late String _surname;
+
   bool _passwordVisibility = true;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   Future<void> addUser() async{
@@ -27,19 +32,10 @@ class _SignUpPageState extends State<SignUpPage>{
         'email': _email,
         'cash': 0,
         'card': 0,
-        'uid': firebaseUser?.uid.toString(),
-        'food': 0,
-        'clothes': 0,
-        'supplies': 0,
-        'other': 0
+        'uid': firebaseUser?.uid.toString()
       }
     );
   }
-
-  late String _email;
-  late String _password;
-  late String _name;
-  late String _surname;
 
   void submit() async {
     await AuthService().signUpWithEmailAndPassword(_email, _password);
@@ -59,7 +55,10 @@ class _SignUpPageState extends State<SignUpPage>{
     }
     else {
       addUser();
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const Casher()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Casher())
+      );
     }
   }
 

@@ -1,7 +1,6 @@
 import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
@@ -13,12 +12,6 @@ class WalletPage extends StatefulWidget {
 class _WalletPageState extends State<WalletPage> {
   late double _cash;
   late double _card;
-  late double _other = 0;
-  late double _food = 0;
-  late double _clothes = 0;
-  late double _supplies = 0;
-  late TooltipBehavior _toolTipBehavior;
-  late List<ExpenseData> _chartData;
 
   bool _isLoading = false;
 
@@ -26,19 +19,18 @@ class _WalletPageState extends State<WalletPage> {
 
   final _controller = TextEditingController();
 
-  DocumentReference docRef = FirebaseFirestore.instance.collection('users').doc(firebaseUser?.uid.toString());
+  DocumentReference docRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(firebaseUser?.uid.toString());
 
   Future<void> _updateMoney() async {
-    await docRef.update (
-      {
-        "cash": _cash,
-        "card": _card,
-        "other": _other,
-        "food": _food,
-        "clothes": _clothes,
-        "supplies": _supplies
-      }
+    docRef.update (
+        {
+          "cash": _cash,
+          "card": _card
+        }
     );
+    await _getInfo();
   }
   Future<void> _getInfo() async {
     setState(() {
@@ -48,31 +40,15 @@ class _WalletPageState extends State<WalletPage> {
       setState(() {
         _cash = snapshot['cash'];
         _card = snapshot['card'];
-        _other = snapshot['other'];
-        _food = snapshot['food'];
-        _clothes = snapshot['clothes'];
-        _supplies = snapshot['supplies'];
         _isLoading = false;
       });
     });
-  }
-
-  List<ExpenseData> getExpenseData() {
-    final List<ExpenseData> chartData = [
-      ExpenseData('Продукты', _food),
-      ExpenseData('Одежда', _clothes),
-      ExpenseData('Коммунальные расходы', _supplies),
-      ExpenseData('Прочие расходы', _other)
-    ];
-    return chartData;
   }
 
   @override
   void initState() {
     _getInfo();
     _updateMoney();
-    _chartData = getExpenseData();
-    _toolTipBehavior = TooltipBehavior(enable: true);
     super.initState();
   }
 
@@ -81,14 +57,6 @@ class _WalletPageState extends State<WalletPage> {
     'Карта'
   ];
   var _selectedStore = 'Наличные';
-
-  final List<String> _categories = [
-    'Продукты',
-    'Одежда',
-    'Коммунальные расходы',
-    'Прочие расходы'
-  ];
-  var _selectedCategory = 'Продукты';
 
   void _addCash() async{
     _cash += _number;
@@ -101,20 +69,17 @@ class _WalletPageState extends State<WalletPage> {
     _card += _number;
     _controller.clear();
     _number = 0;
-    setState(() {
-
-    });
     await _updateMoney();
   }
 
   void _minusCash() async{
     if (_number <= _cash) {
       _cash -= _number;
-      _whichCategorySelected();
       _controller.clear();
       await _updateMoney();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_errorSnackBar);
     }
     _number = 0;
     _controller.clear();
@@ -123,11 +88,11 @@ class _WalletPageState extends State<WalletPage> {
   void _minusCard() async{
     if (_number <= _card) {
       _card -= _number;
-      _whichCategorySelected();
       _controller.clear();
       await _updateMoney();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_errorSnackBar);
     }
     _number = 0;
     _controller.clear();
@@ -151,63 +116,6 @@ class _WalletPageState extends State<WalletPage> {
         break;
       case 'Карта':
         _minusCard();
-        break;
-    }
-  }
-
-  double _setOtherExpense() {
-    _other += _number;
-    setState(() {
-      _chartData = <ExpenseData>[];
-      _chartData = getExpenseData();
-    });
-    return _other;
-  }
-
-  double _setFoodExpense() {
-    _food += _number;
-    setState(() {
-      _chartData = <ExpenseData>[];
-      _chartData = getExpenseData();
-    });
-    return _food;
-  }
-
-  double _setClothesExpense() {
-    _clothes += _number;
-    setState(() {
-      _chartData = <ExpenseData>[];
-      _chartData = getExpenseData();
-    });
-    return _clothes;
-  }
-
-  double _setSuppliesExpense() {
-    _supplies += _number;
-    setState(() {
-      _chartData = <ExpenseData>[];
-      _chartData = getExpenseData();
-    });
-    return _supplies;
-  }
-
-  void _whichCategorySelected() async {
-    switch(_selectedCategory) {
-      case 'Прочие расходы':
-        _setOtherExpense();
-        await _updateMoney();
-        break;
-      case 'Продукты':
-        _setFoodExpense();
-        await _updateMoney();
-        break;
-      case 'Одежда':
-        _setClothesExpense();
-        await _updateMoney();
-        break;
-      case 'Коммунальные расходы':
-        _setSuppliesExpense();
-        await _updateMoney();
         break;
     }
   }
@@ -249,55 +157,66 @@ class _WalletPageState extends State<WalletPage> {
             children: <Widget>[
               Flexible(
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-                  decoration: BoxDecoration(
-                    boxShadow: const [
-                      BoxShadow(
-                          blurRadius: 10, color: Color(0xA0028326), offset: Offset(0,4)
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(15),
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFDBD5A4),
-                        Color(0xFF649173),
-                      ],
-                    ),
+                  constraints: const BoxConstraints(
+                    maxWidth: 500,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset("assets/images/banknote/dollar.png"),
-                          ]
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                const Text('Баланс', style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
-                                Text('${_cash.toString()} BYN', style: const TextStyle(fontSize: 28, fontFamily: 'Raleway', fontWeight: FontWeight.bold))
-                              ],
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Image.asset("assets/images/banknote/dollar.png"),
-                          ],
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                    decoration: BoxDecoration(
+                      boxShadow: const [
+                        BoxShadow(
+                            blurRadius: 10, color: Color(0xA0028326), offset: Offset(0,4)
                         ),
                       ],
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFFDBD5A4),
+                          Color(0xFF649173),
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image.asset("assets/images/banknote/dollar.png"),
+                            ]
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
+                                children: [
+                                  const Text('Баланс', style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
+                                  Text(
+                                      '${_cash.toString()} BYN',
+                                      style: const TextStyle(
+                                          fontSize: 28,
+                                          fontFamily: 'Raleway',
+                                          fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Image.asset("assets/images/banknote/dollar.png"),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -309,12 +228,15 @@ class _WalletPageState extends State<WalletPage> {
             children: <Widget>[
               Flexible(
                 child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 435,
+                  ),
                   margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
                   decoration: BoxDecoration(
                     boxShadow: const [
                       BoxShadow(
                           blurRadius: 10, color: Color(0xA0FF0000), offset: Offset(0,4)
-                      )
+                      ),
                     ],
                     borderRadius: BorderRadius.circular(15),
                     gradient: const LinearGradient(
@@ -346,13 +268,22 @@ class _WalletPageState extends State<WalletPage> {
                                 const Text(
                                   'Баланс',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 20, color: Colors.black, fontFamily: 'Raleway'),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontFamily: 'Raleway'
+                                  ),
                                 ),
                                 Text(
                                   '${_card.toString()} BYN',
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(fontFamily: 'Raleway', fontSize: 28, color: Colors.black, fontWeight: FontWeight.bold),
-                                )
+                                  style: const TextStyle(
+                                      fontFamily: 'Raleway',
+                                      fontSize: 28,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -369,7 +300,7 @@ class _WalletPageState extends State<WalletPage> {
                             Text(
                               'Instant card',
                               style: TextStyle(fontSize: 20, color: Colors.black, fontFamily: 'Raleway'),
-                            )
+                            ),
                           ],
                         )
                       ],
@@ -379,58 +310,127 @@ class _WalletPageState extends State<WalletPage> {
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              DropdownButton<String>(
-                value: _selectedStore,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                elevation: 16,
-                style: const TextStyle(fontSize: 20, color: Colors.black),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedStore = newValue!;
-                  });
-                },
-                items: _moneyStores
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width/2,
+                        child: FloatingActionButton.extended(
+                          onPressed: () {
+                            setState(() {
+                              showAddAlertDialog(context);
+                            });
+                          },
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                                bottomLeft: Radius.circular(0),
+                                bottomRight: Radius.circular(0)
+                            ),
+                          ),
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          elevation: 0,
+                          label: const Align(
+                              alignment: Alignment.center,
+                              child:
+                              Text(
+                                  '+',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                      fontSize: 60,
+                                      fontFamily: 'Raleway'
+                                  ),
+                              ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width/2,
+                        child: FloatingActionButton.extended(
+                          onPressed: () {
+                            setState((){
+                              showDeleteAlertDialog(context);
+                            });
+                          },
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                                bottomLeft: Radius.circular(0),
+                                bottomRight: Radius.circular(0)
+                            ),
+                          ),
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          elevation: 0,
+                          label: const Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                  '-',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 60,
+                                      fontFamily: 'Raleway'),
+                              ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const Padding(padding: EdgeInsets.only(left: 10)),
-              DropdownButton<String>(
-                value: _selectedCategory,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                elevation: 16,
-                style: const TextStyle(fontSize: 20, color: Colors.black),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedCategory = newValue!;
-                  });
-                },
-                items: _categories
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ],
+            ),
           ),
-          SizedBox(
-            child: TextFormField(
+        ],
+      ),
+    );
+  }
+
+  Future<void> showAddAlertDialog(BuildContext context) async{
+    Widget addButton = TextButton(
+      child: const Text(
+        "Добавить",
+        style: TextStyle(
+            fontSize: 20,
+            color: Colors.deepPurpleAccent
+        ),
+      ),
+      onPressed: () async {
+        _whichStoreSelectedToAdd();
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: const Text(
+        "Доходы",
+        style: TextStyle(
+            fontWeight: FontWeight.bold
+        ),
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12))
+      ),
+      content: SizedBox(
+        height: 150,
+        width: 100,
+        child: Column(
+          children: <Widget>[
+            const Text(
+              'Введите сумму для добавления',
+            ),
+            TextFormField(
               textAlign: TextAlign.center,
               controller: _controller,
               cursorColor: Colors.deepPurpleAccent,
@@ -441,52 +441,117 @@ class _WalletPageState extends State<WalletPage> {
                 });
               },
             ),
-            width: 100,
-            height: 35,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: MaterialButton(
-                  onPressed: () {
-                    setState(() {
-                      _whichStoreSelectedToAdd();
-                    });
-                  },
-                  child: const Text(
-                    'Добавить',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  color: Colors.deepPurpleAccent,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: MaterialButton(
-                  onPressed: () {
-                    setState(() {
-                      _whichStoreSelectedToDelete();
-                    });
-                  },
-                  child: const Text(
-                    'Отнять',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  color: Colors.deepPurpleAccent,
-                ),
-              ),
-            ],
-          ),
-        ],
+            const Padding(padding: EdgeInsets.only(top: 12)),
+            DropdownButton<String>(
+              value: _selectedStore,
+              icon: const Icon(Icons.arrow_drop_down_rounded),
+              elevation: 16,
+              style: const TextStyle(fontSize: 20, color: Colors.black),
+              underline: Container(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedStore = newValue!;
+                });
+              },
+              items: _moneyStores
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
+      actions: [
+        addButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
-}
 
-class ExpenseData {
-  ExpenseData(this.name, this.expense);
-  final String name;
-  late double? expense;
+  Future<void> showDeleteAlertDialog(BuildContext context) async{
+    Widget minusButton = TextButton(
+      child: const Text(
+        "Отнять",
+        style:
+        TextStyle(
+            fontSize: 20,
+            color: Colors.deepPurpleAccent
+        ),
+      ),
+      onPressed: () async {
+        _whichStoreSelectedToDelete();
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: const Text(
+        "Затраты",
+        style: TextStyle(
+            fontWeight: FontWeight.bold
+        ),
+      ),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12))
+      ),
+      content: SizedBox(
+        height: 150,
+        width: 100,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Введите потраченную сумму',
+            ),
+            TextFormField(
+              textAlign: TextAlign.center,
+              controller: _controller,
+              cursorColor: Colors.deepPurpleAccent,
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  press(double.parse(value));
+                });
+              },
+            ),
+            const Padding(padding: EdgeInsets.only(top: 12)),
+            DropdownButton<String>(
+              value: _selectedStore,
+              icon: const Icon(Icons.arrow_drop_down_rounded),
+              elevation: 16,
+              style: const TextStyle(fontSize: 20, color: Colors.black),
+              underline: Container(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedStore = newValue!;
+                });
+              },
+              items: _moneyStores
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        minusButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 }
