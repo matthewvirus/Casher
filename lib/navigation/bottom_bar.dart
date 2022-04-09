@@ -39,8 +39,8 @@ class BottomNavBarScreenState extends State<BottomNavBar> {
               label: 'Кошелёк',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.assessment),
-            label: 'Категории',
+            icon: Icon(Icons.insert_chart),
+            label: 'Операции',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_box),
