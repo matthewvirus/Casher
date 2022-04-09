@@ -43,6 +43,7 @@ dependencies:
   cloud_firestore: ^3.1.10
   provider: ^6.0.2
   syncfusion_flutter_charts: ^19.4.56
+  animated_splash_screen: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +56,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
   build_runner: ^2.1.8
+  flutter_launcher_icons: ^0.9.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -76,9 +78,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/casher.png
+    - assets/images/splash.jpg
     - assets/images/card/chip.png
     - assets/images/card/card_operator.png
     - assets/images/banknote/dollar.png
+    - assets/icons/app_icon.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -106,3 +110,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/app_icon.png"
