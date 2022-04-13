@@ -19,4 +19,4 @@ P.S. Screenshots:
   <img src="https://github.com/matthewvirus/Casher/blob/master/assets/git_images/Operations.png" alt="Operations list" width="200"/>
 </p>
 
-P.P.S. That's not end, in future I will add some new fatures :)
+P.P.S. That's not end, in future I will add some new features :)
