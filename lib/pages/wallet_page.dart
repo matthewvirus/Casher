@@ -3,6 +3,7 @@ import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class WalletPage extends StatefulWidget {
 class _WalletPageState extends State<WalletPage> {
   late double _cash;
   late double _card;
+  final Future<SharedPreferences> preferences = SharedPreferences.getInstance();
 
   bool _isLoading = false;
 
@@ -66,7 +68,7 @@ class _WalletPageState extends State<WalletPage> {
     'Наличные',
     'Карта'
   ];
-  var _selectedStore = 'Наличные';
+  String _selectedStore = 'Наличные';
 
   void _addCash() async{
     _cash += _number;
@@ -480,14 +482,15 @@ class _WalletPageState extends State<WalletPage> {
               onSubmitted: (value) {
                 setState(() {
                   operations.add(
-                      Operation(
-                          text: value,
-                          value: _number,
-                          icon: const Icon(
-                              Icons.arrow_upward,
-                              color: Colors.lightGreen
-                          ),
+                    Operation(
+                      id: operations.length,
+                      text: value,
+                      value: _number,
+                      icon: const Icon(
+                          Icons.arrow_upward,
+                          color: Colors.lightGreen
                       ),
+                    ),
                   );
                 });
               },
@@ -580,14 +583,15 @@ class _WalletPageState extends State<WalletPage> {
               onSubmitted: (value) {
                 setState(() {
                   operations.add(
-                      Operation(
-                          text: value,
-                          value: _number,
-                          icon: const Icon(
-                              Icons.arrow_downward,
-                              color: Colors.redAccent
-                          ),
+                    Operation(
+                      id: operations.length,
+                      text: value,
+                      value: _number,
+                      icon: const Icon(
+                          Icons.arrow_downward,
+                          color: Colors.redAccent
                       ),
+                    ),
                   );
                 });
               },
