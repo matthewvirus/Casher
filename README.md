@@ -10,12 +10,12 @@ how to use this app and demonstrate UI.
 
 P.S. Screenshots:
 
-![Sign Up page](SignUp.png)
-![Sign In page](SignIn.png)
-![Profile page](Profile.png)
-![Wallet page](Wallet.png)
-![How to add money?](Income.png)
-![And how to spend money?](Expense.png)
-![Operations list](Operations.png)
+![Sign Up page](https://github.com/matthewvirus/Casher/blob/master/assets/git_images/SignUp.png)
+![Sign In page](https://github.com/matthewvirus/Casher/blob/master/assets/git_images/SignIn.png)
+![Profile page](https://github.com/matthewvirus/Casher/blob/master/assets/git_images/Profile.png)
+![Wallet page](https://github.com/matthewvirus/Casher/blob/master/assets/git_images/Wallet.png)
+![How to add money?](https://github.com/matthewvirus/Casher/blob/master/assets/git_images/Income.png)
+![And how to spend money?](https://github.com/matthewvirus/Casher/blob/master/assets/git_images/Expense.png)
+![Operations list](https://github.com/matthewvirus/Casher/blob/master/assets/git_images/Operations.png)
 
 P.P.S. That's not end, in future I will add some new fatures :)
