@@ -1,6 +1,8 @@
+import 'package:casher/listview_data/operation.dart';
 import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
@@ -17,7 +19,15 @@ class _WalletPageState extends State<WalletPage> {
 
   double _number = 0;
 
-  final _controller = TextEditingController();
+  String? getCurrency() {
+    Locale locale = Localizations.localeOf(context);
+    var format = NumberFormat.simpleCurrency(locale: locale.toString());
+    return format.currencyName;
+  }
+
+  final _moneyController = TextEditingController();
+  final _incomeController = TextEditingController();
+  final _expenseController = TextEditingController();
 
   DocumentReference docRef = FirebaseFirestore.instance
       .collection('users')
@@ -60,14 +70,14 @@ class _WalletPageState extends State<WalletPage> {
 
   void _addCash() async{
     _cash += _number;
-    _controller.clear();
+    _moneyController.clear();
     _number = 0;
     await _updateMoney();
   }
 
   void _addCard() async{
     _card += _number;
-    _controller.clear();
+    _moneyController.clear();
     _number = 0;
     await _updateMoney();
   }
@@ -75,27 +85,27 @@ class _WalletPageState extends State<WalletPage> {
   void _minusCash() async{
     if (_number <= _cash) {
       _cash -= _number;
-      _controller.clear();
+      _moneyController.clear();
       await _updateMoney();
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(_errorSnackBar);
     }
     _number = 0;
-    _controller.clear();
+    _moneyController.clear();
   }
 
   void _minusCard() async{
     if (_number <= _card) {
       _card -= _number;
-      _controller.clear();
+      _moneyController.clear();
       await _updateMoney();
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(_errorSnackBar);
     }
     _number = 0;
-    _controller.clear();
+    _moneyController.clear();
   }
 
   void _whichStoreSelectedToAdd() {
@@ -168,7 +178,7 @@ class _WalletPageState extends State<WalletPage> {
                             blurRadius: 10, color: Color(0xA0028326), offset: Offset(0,4)
                         ),
                       ],
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(16),
                       gradient: const LinearGradient(
                         colors: [
                           Color(0xFFDBD5A4),
@@ -196,7 +206,7 @@ class _WalletPageState extends State<WalletPage> {
                                 children: [
                                   const Text('Баланс', style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
                                   Text(
-                                      '${_cash.toString()} BYN',
+                                      '${_cash.toString()} ${getCurrency()}',
                                       style: const TextStyle(
                                           fontSize: 28,
                                           fontFamily: 'Raleway',
@@ -238,7 +248,7 @@ class _WalletPageState extends State<WalletPage> {
                           blurRadius: 10, color: Color(0xA0FF0000), offset: Offset(0,4)
                       ),
                     ],
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(16),
                     gradient: const LinearGradient(
                       colors: [
                         Color(0xFFFFAFBD),
@@ -275,7 +285,7 @@ class _WalletPageState extends State<WalletPage> {
                                   ),
                                 ),
                                 Text(
-                                  '${_card.toString()} BYN',
+                                  '${_card.toString()} ${getCurrency()}',
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontFamily: 'Raleway',
@@ -329,8 +339,8 @@ class _WalletPageState extends State<WalletPage> {
                           },
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12),
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16),
                                 bottomLeft: Radius.circular(0),
                                 bottomRight: Radius.circular(0)
                             ),
@@ -367,8 +377,8 @@ class _WalletPageState extends State<WalletPage> {
                           },
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12),
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16),
                                 bottomLeft: Radius.circular(0),
                                 bottomRight: Radius.circular(0)
                             ),
@@ -399,7 +409,7 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
-  Future<void> showAddAlertDialog(BuildContext context) async{
+  Future<void> showAddAlertDialog(BuildContext context) async {
     Widget addButton = TextButton(
       child: const Text(
         "Добавить",
@@ -410,6 +420,7 @@ class _WalletPageState extends State<WalletPage> {
       ),
       onPressed: () async {
         _whichStoreSelectedToAdd();
+        Navigator.of(context, rootNavigator: true).pop('dialog');
       },
     );
     AlertDialog alert = AlertDialog(
@@ -423,7 +434,7 @@ class _WalletPageState extends State<WalletPage> {
         borderRadius: BorderRadius.all(Radius.circular(12))
       ),
       content: SizedBox(
-        height: 150,
+        height: 200,
         width: 100,
         child: Column(
           children: <Widget>[
@@ -432,7 +443,7 @@ class _WalletPageState extends State<WalletPage> {
             ),
             TextFormField(
               textAlign: TextAlign.center,
-              controller: _controller,
+              controller: _moneyController,
               cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -460,6 +471,26 @@ class _WalletPageState extends State<WalletPage> {
                   child: Text(value),
                 );
               }).toList(),
+            ),
+            TextField(
+              textAlign: TextAlign.center,
+              controller: _incomeController,
+              cursorColor: Colors.deepPurpleAccent,
+              keyboardType: TextInputType.text,
+              onSubmitted: (value) {
+                setState(() {
+                  operations.add(
+                      Operation(
+                          text: value,
+                          value: _number,
+                          icon: const Icon(
+                              Icons.arrow_upward,
+                              color: Colors.lightGreen
+                          ),
+                      ),
+                  );
+                });
+              },
             ),
           ],
         ),
@@ -476,7 +507,7 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
-  Future<void> showDeleteAlertDialog(BuildContext context) async{
+  Future<void> showDeleteAlertDialog(BuildContext context) async {
     Widget minusButton = TextButton(
       child: const Text(
         "Отнять",
@@ -488,6 +519,7 @@ class _WalletPageState extends State<WalletPage> {
       ),
       onPressed: () async {
         _whichStoreSelectedToDelete();
+        Navigator.of(context, rootNavigator: true).pop('dialog');
       },
     );
     AlertDialog alert = AlertDialog(
@@ -501,7 +533,7 @@ class _WalletPageState extends State<WalletPage> {
           borderRadius: BorderRadius.all(Radius.circular(12))
       ),
       content: SizedBox(
-        height: 150,
+        height: 200,
         width: 100,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -511,7 +543,7 @@ class _WalletPageState extends State<WalletPage> {
             ),
             TextFormField(
               textAlign: TextAlign.center,
-              controller: _controller,
+              controller: _moneyController,
               cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -539,6 +571,26 @@ class _WalletPageState extends State<WalletPage> {
                   child: Text(value),
                 );
               }).toList(),
+            ),
+            TextField(
+              textAlign: TextAlign.center,
+              controller: _expenseController,
+              cursorColor: Colors.deepPurpleAccent,
+              keyboardType: TextInputType.text,
+              onSubmitted: (value) {
+                setState(() {
+                  operations.add(
+                      Operation(
+                          text: value,
+                          value: _number,
+                          icon: const Icon(
+                              Icons.arrow_downward,
+                              color: Colors.redAccent
+                          ),
+                      ),
+                  );
+                });
+              },
             ),
           ],
         ),
