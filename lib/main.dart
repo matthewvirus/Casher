@@ -1,21 +1,14 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:casher/pages/landing.dart';
 import 'package:casher/services/auth.dart';
 import 'package:casher/services/auth_user.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:casher/navigation/bottom_bar.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-        apiKey: "AIzaSyDl9ab7BwMfQVb73oxJO3Dscr71H_sLtPQ",
-        appId: "1:127398713356:android:c46fab9f3a2cac771fb629",
-        messagingSenderId: "127398713356",
-        projectId: "casher-58d19"
-    ),
-  );
+  await Firebase.initializeApp();
   runApp(const Casher());
 }
 
@@ -24,6 +17,7 @@ class Casher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return StreamProvider<AuthUser?>.value(
       initialData: null,
       value: AuthService().currentUser,
@@ -33,16 +27,7 @@ class Casher extends StatelessWidget {
           theme: ThemeData(fontFamily: 'Raleway'),
           home: AnimatedSplashScreen(
             splash: Image.asset("assets/images/splash.jpg"),
-            nextScreen: Scaffold(
-              appBar: AppBar(
-                elevation: 0,
-                title: const Text('Casher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
-                centerTitle: true,
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.deepPurpleAccent,
-              ),
-              body: const BottomNavBar(),
-            ),
+            nextScreen: const LandingPage(),
           ),
       ),
     );

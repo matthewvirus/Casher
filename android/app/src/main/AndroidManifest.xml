@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="by.matthewvirus.casher">
-   <application
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <application
         android:label="Casher"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">

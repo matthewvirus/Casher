@@ -1,5 +1,6 @@
 import 'package:casher/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -88,7 +89,7 @@ class _SignUpPageState extends State<SignUpPage>{
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                     borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
                   ),
-                  prefixIcon: Icon(Icons.account_circle),
+                  prefixIcon: Icon(CupertinoIcons.person_crop_circle_fill),
                   hintText: 'Имя',
                 ),
                 keyboardType: TextInputType.name,
@@ -103,7 +104,7 @@ class _SignUpPageState extends State<SignUpPage>{
             SizedBox(
               child: TextFormField(
                 decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.supervised_user_circle),
+                  prefixIcon: Icon(CupertinoIcons.person_2_fill),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
@@ -125,7 +126,7 @@ class _SignUpPageState extends State<SignUpPage>{
             SizedBox(
               child: TextFormField(
                 decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.email),
+                  prefixIcon: Icon(CupertinoIcons.mail_solid),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
@@ -147,12 +148,12 @@ class _SignUpPageState extends State<SignUpPage>{
             SizedBox(
               child: TextFormField(
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock),
+                  prefixIcon: const Icon(CupertinoIcons.lock_fill),
                   suffixIcon: IconButton(
                     icon: Icon(
                         _passwordVisibility
-                            ? Icons.visibility
-                            : Icons.visibility_off
+                            ? CupertinoIcons.eye_fill
+                            : CupertinoIcons.eye_slash_fill
                     ),
                     onPressed: () {
                       setState(() {
@@ -180,7 +181,7 @@ class _SignUpPageState extends State<SignUpPage>{
             Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 10),
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.login),
+                icon: const Icon(CupertinoIcons.square_arrow_right),
                 label: const Text('Зарегистрироваться'),
                 onPressed: submit,
                 style: ElevatedButton.styleFrom(

@@ -1,4 +1,5 @@
 import 'package:casher/pages/signup_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';

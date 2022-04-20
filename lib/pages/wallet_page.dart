@@ -1,9 +1,12 @@
-import 'package:casher/listview_data/operation.dart';
+import 'package:casher/Model/database.dart';
+import 'package:casher/pages/signin_page.dart';
 import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:drift/drift.dart' as drift;
+import 'package:provider/provider.dart';
+
+import '../services/auth_user.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
@@ -13,19 +16,11 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
-  late double _cash;
-  late double _card;
-  final Future<SharedPreferences> preferences = SharedPreferences.getInstance();
-
+  late MyDatabase _database;
+  late double _cash = 0;
+  late double _card = 0;
   bool _isLoading = false;
-
   double _number = 0;
-
-  String? getCurrency() {
-    Locale locale = Localizations.localeOf(context);
-    var format = NumberFormat.simpleCurrency(locale: locale.toString());
-    return format.currencyName;
-  }
 
   final _moneyController = TextEditingController();
   final _incomeController = TextEditingController();
@@ -59,9 +54,17 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   void initState() {
+    super.initState();
     _getInfo();
     _updateMoney();
-    super.initState();
+    _database = MyDatabase();
+  }
+
+  @override
+  void dispose() {
+    _database.close();
+    _incomeController.dispose();
+    super.dispose();
   }
 
   final List<String> _moneyStores = [
@@ -153,7 +156,7 @@ class _WalletPageState extends State<WalletPage> {
 
   Widget circularBar() {
     return const Center(
-      child: CircularProgressIndicator(),
+      child: CircularProgressIndicator(color: Colors.black54),
     );
   }
 
@@ -208,7 +211,7 @@ class _WalletPageState extends State<WalletPage> {
                                 children: [
                                   const Text('Баланс', style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
                                   Text(
-                                      '${_cash.toString()} ${getCurrency()}',
+                                      '${_cash.toString()} BYN',
                                       style: const TextStyle(
                                           fontSize: 28,
                                           fontFamily: 'Raleway',
@@ -287,7 +290,7 @@ class _WalletPageState extends State<WalletPage> {
                                   ),
                                 ),
                                 Text(
-                                  '${_card.toString()} ${getCurrency()}',
+                                  '${_card.toString()} BYN',
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontFamily: 'Raleway',
@@ -395,7 +398,8 @@ class _WalletPageState extends State<WalletPage> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 60,
-                                      fontFamily: 'Raleway'),
+                                      fontFamily: 'Raleway'
+                                  ),
                               ),
                           ),
                         ),
@@ -421,8 +425,34 @@ class _WalletPageState extends State<WalletPage> {
         ),
       ),
       onPressed: () async {
-        _whichStoreSelectedToAdd();
-        Navigator.of(context, rootNavigator: true).pop('dialog');
+        if (_number != 0) {
+          _whichStoreSelectedToAdd();
+          final operation = OperationsCompanion(
+            operation: drift.Value(_incomeController.text),
+            value: drift.Value(_moneyController.value.text),
+            tag: const drift.Value(1),
+          );
+          _database.insertOperation(operation);
+          Navigator.of(context, rootNavigator: true).pop('dialog');
+        }
+        else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: const <Widget>[
+                  Icon(Icons.error, color: Colors.redAccent),
+                  Padding(padding: EdgeInsets.only(left: 10)),
+                  Text('Введено неверное число!'),
+                ],
+              ),
+              duration: const Duration(seconds: 2),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+              ),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       },
     );
     AlertDialog alert = AlertDialog(
@@ -448,6 +478,11 @@ class _WalletPageState extends State<WalletPage> {
               controller: _moneyController,
               cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                ),
+              ),
               onChanged: (value) {
                 setState(() {
                   press(double.parse(value));
@@ -475,25 +510,17 @@ class _WalletPageState extends State<WalletPage> {
               }).toList(),
             ),
             TextField(
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
               controller: _incomeController,
               cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.text,
-              onSubmitted: (value) {
-                setState(() {
-                  operations.add(
-                    Operation(
-                      id: operations.length,
-                      text: value,
-                      value: _number,
-                      icon: const Icon(
-                          Icons.arrow_upward,
-                          color: Colors.lightGreen
-                      ),
-                    ),
-                  );
-                });
-              },
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                label: Text('Введите комментарий'),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                ),
+              ),
             ),
           ],
         ),
@@ -521,8 +548,34 @@ class _WalletPageState extends State<WalletPage> {
         ),
       ),
       onPressed: () async {
-        _whichStoreSelectedToDelete();
-        Navigator.of(context, rootNavigator: true).pop('dialog');
+        if (_number != 0) {
+          _whichStoreSelectedToDelete();
+          final operation = OperationsCompanion(
+            operation: drift.Value(_expenseController.text),
+            value: drift.Value(_moneyController.value.text),
+            tag: const drift.Value(0),
+          );
+          _database.insertOperation(operation);
+          Navigator.of(context, rootNavigator: true).pop('dialog');
+        }
+        else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: const <Widget>[
+                  Icon(Icons.error, color: Colors.redAccent),
+                  Padding(padding: EdgeInsets.only(left: 10)),
+                  Text('Введено неверное число!'),
+                ],
+              ),
+              duration: const Duration(seconds: 2),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+              ),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       },
     );
     AlertDialog alert = AlertDialog(
@@ -549,6 +602,11 @@ class _WalletPageState extends State<WalletPage> {
               controller: _moneyController,
               cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                ),
+              ),
               onChanged: (value) {
                 setState(() {
                   press(double.parse(value));
@@ -576,25 +634,17 @@ class _WalletPageState extends State<WalletPage> {
               }).toList(),
             ),
             TextField(
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
               controller: _expenseController,
               cursorColor: Colors.deepPurpleAccent,
               keyboardType: TextInputType.text,
-              onSubmitted: (value) {
-                setState(() {
-                  operations.add(
-                    Operation(
-                      id: operations.length,
-                      text: value,
-                      value: _number,
-                      icon: const Icon(
-                          Icons.arrow_downward,
-                          color: Colors.redAccent
-                      ),
-                    ),
-                  );
-                });
-              },
+              decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  label: Text('Введите комментарий'),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                  ),
+              ),
             ),
           ],
         ),

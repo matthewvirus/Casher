@@ -2,6 +2,7 @@ import 'package:casher/main.dart';
 import 'package:casher/pages/signup_page.dart';
 import 'package:casher/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -92,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
                     ),
-                    prefixIcon: Icon(Icons.email),
+                    prefixIcon: Icon(CupertinoIcons.mail_solid),
                     hintText: 'Email',
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -117,8 +118,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     suffixIcon: IconButton(
                       icon: Icon(
                           _passwordVisibility
-                              ? Icons.visibility
-                              : Icons.visibility_off
+                              ? CupertinoIcons.eye_fill
+                              : CupertinoIcons.eye_slash_fill
                       ),
                       onPressed: () {
                         setState(() {
@@ -126,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
-                    prefixIcon: const Icon(Icons.lock),
+                    prefixIcon: const Icon(CupertinoIcons.lock_fill),
                     hintText: 'Пароль',
                   ),
                   obscureText: _passwordVisibility,
@@ -140,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 20, bottom: 10),
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.login),
+                  icon: const Icon(CupertinoIcons.square_arrow_right),
                   label: const Text('Войти'),
                   onPressed: _signIn,
                   style: ElevatedButton.styleFrom(

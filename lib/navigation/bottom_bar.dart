@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:casher/pages/wallet_page.dart';
 import 'package:casher/pages/category_page.dart';
@@ -32,18 +33,23 @@ class BottomNavBarScreenState extends State<BottomNavBar> {
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
+        iconSize: 24,
+        selectedIconTheme: const IconThemeData(color: Colors.deepPurpleAccent, size: 28),
         elevation: 0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet),
+              icon: Icon(CupertinoIcons.creditcard),
+              activeIcon: Icon(CupertinoIcons.creditcard_fill),
               label: 'Кошелёк',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.insert_chart),
+            icon: Icon(CupertinoIcons.chart_bar),
+            activeIcon: Icon(CupertinoIcons.chart_bar_fill),
             label: 'Операции',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_box),
+            icon: Icon(CupertinoIcons.person_crop_circle),
+            activeIcon: Icon(CupertinoIcons.person_crop_circle_fill),
             label: 'Аккаунт',
           ),
         ],
