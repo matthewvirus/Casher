@@ -87,10 +87,10 @@ class Operation extends DataClass implements Insertable<Operation> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Operation &&
-          other.id == this.id &&
-          other.operation == this.operation &&
-          other.value == this.value &&
-          other.tag == this.tag);
+          other.id == id &&
+          other.operation == operation &&
+          other.value == value &&
+          other.tag == tag);
 }
 
 class OperationsCompanion extends UpdateCompanion<Operation> {

@@ -1,12 +1,8 @@
 import 'package:casher/Model/database.dart';
-import 'package:casher/pages/signin_page.dart';
 import 'package:casher/pages/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:drift/drift.dart' as drift;
-import 'package:provider/provider.dart';
-
-import '../services/auth_user.dart';
 
 class WalletPage extends StatefulWidget {
   const WalletPage({Key? key}) : super(key: key);
