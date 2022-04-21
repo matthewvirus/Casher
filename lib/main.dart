@@ -17,7 +17,6 @@ class Casher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return StreamProvider<AuthUser?>.value(
       initialData: null,
       value: AuthService().currentUser,

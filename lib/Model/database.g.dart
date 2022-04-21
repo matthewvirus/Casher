@@ -1,5 +1,12 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 part of 'database.dart';
 
+// **************************************************************************
+// MoorGenerator
+// **************************************************************************
+
+// ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Operation extends DataClass implements Insertable<Operation> {
   final int id;
   final String operation;
@@ -87,10 +94,10 @@ class Operation extends DataClass implements Insertable<Operation> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Operation &&
-          other.id == id &&
-          other.operation == operation &&
-          other.value == value &&
-          other.tag == tag);
+          other.id == this.id &&
+          other.operation == this.operation &&
+          other.value == this.value &&
+          other.tag == this.tag);
 }
 
 class OperationsCompanion extends UpdateCompanion<Operation> {
@@ -187,7 +194,7 @@ class $OperationsTable extends Operations
   late final GeneratedColumn<String?> operation = GeneratedColumn<String?>(
       'operation', aliasedName, false,
       additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 6, maxTextLength: 32),
+          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 32),
       type: const StringType(),
       requiredDuringInsert: true);
   final VerificationMeta _valueMeta = const VerificationMeta('value');
