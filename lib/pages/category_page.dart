@@ -11,8 +11,8 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-
   late MyDatabase _database;
+  bool isChecked = false;
 
   @override
   void initState() {
@@ -34,19 +34,16 @@ class _CategoryPageState extends State<CategoryPage> {
         future: _database.getOperations(),
         builder: (context, snapshot) {
           operationsList = snapshot.data;
-
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-
           if (snapshot.hasError) {
             return const Center(
               child: Text('Error with fetching data!'),
             );
           }
-
           return operationsList!.isEmpty ?const Center(child: Text("Нет последних операций")):ListView.builder(
             padding: const EdgeInsets.all(4),
             itemCount: operationsList!.length,
@@ -56,6 +53,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   if (!selectedOperation.contains(index)) {
                     setState(() {
                       selectedOperation.add(index);
+                      isChecked = true;
                     });
                   }
                 },
@@ -63,6 +61,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   if (selectedOperation.contains(index)) {
                     setState(() {
                       selectedOperation.removeWhere((element) => element == index);
+                      isChecked = false;
                     });
                   }
                 },
@@ -80,27 +79,25 @@ class _CategoryPageState extends State<CategoryPage> {
                       child: Row(
                         children: [
                           const Padding(padding: EdgeInsets.only(left: 10)),
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // ignore: unrelated_type_equality_checks
-                                if (operationsList![index].tag == 1)
-                                  const Icon(CupertinoIcons.arrow_turn_left_up, color: Colors.lightGreen)
-                                else
-                                  const Icon(CupertinoIcons.arrow_turn_left_down, color: Colors.redAccent),
-                                Text(
-                                  // ignore: invalid_use_of_protected_member
-                                  '${operationsList![index].operation} - ${operationsList![index].value} BYN',
-                                  textAlign: TextAlign.start,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black
-                                  ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // ignore: unrelated_type_equality_checks
+                              if (operationsList![index].tag == 1)
+                                const Icon(CupertinoIcons.arrow_turn_left_up, color: Colors.lightGreen)
+                              else
+                                const Icon(CupertinoIcons.arrow_turn_left_down, color: Colors.redAccent),
+                              Text(
+                                // ignore: invalid_use_of_protected_member
+                                '${operationsList![index].operation} - ${operationsList![index].value} BYN',
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

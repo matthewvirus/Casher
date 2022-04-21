@@ -1,8 +1,8 @@
-import 'package:casher/pages/signup_page.dart';
-import 'package:firebase_core/firebase_core.dart';
-
 import 'auth_user.dart';
+import 'package:casher/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+String errorMessage = '';
 
 class AuthService{
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -12,10 +12,12 @@ class AuthService{
       UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       firebaseUser = user;
+      errorMessage = '';
       return AuthUser.fromFirebase(user);
-    } on FirebaseAuthException {
-      return null;
+    } on FirebaseAuthException catch (error){
+      errorMessage = error.message!;
     }
+    return null;
   }
 
   Future<AuthUser?> signUpWithEmailAndPassword(String email, String password) async{
@@ -23,10 +25,12 @@ class AuthService{
       UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       firebaseUser = user;
+      errorMessage = '';
       return AuthUser.fromFirebase(user);
-    } on FirebaseAuthException {
-      return null;
+    } on FirebaseAuthException catch (error){
+      errorMessage = error.message!;
     }
+    return null;
   }
 
   Future logOut() async {
