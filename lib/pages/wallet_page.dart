@@ -13,8 +13,8 @@ class WalletPage extends StatefulWidget {
 
 class _WalletPageState extends State<WalletPage> {
   late MyDatabase _database;
-  late double _cash = 0;
-  late double _card = 0;
+  late double _cash;
+  late double _card;
   bool _isLoading = false;
   double _number = 0;
 
@@ -60,6 +60,8 @@ class _WalletPageState extends State<WalletPage> {
   void dispose() {
     _database.close();
     _incomeController.dispose();
+    _expenseController.dispose();
+    _moneyController.dispose();
     super.dispose();
   }
 
@@ -69,8 +71,27 @@ class _WalletPageState extends State<WalletPage> {
   ];
   String _selectedStore = 'Наличные';
 
+  void _addToDbIncome(){
+    final operation = OperationsCompanion(
+      operation: drift.Value(_incomeController.text),
+      value: drift.Value(_number.toString()),
+      tag: const drift.Value(1),
+    );
+    _database.insertOperation(operation);
+  }
+
+  void _addToDbExpense(){
+    final operation = OperationsCompanion(
+      operation: drift.Value(_expenseController.text),
+      value: drift.Value(_number.toString()),
+      tag: const drift.Value(0),
+    );
+    _database.insertOperation(operation);
+  }
+
   void _addCash() async{
     _cash += _number;
+    _addToDbIncome();
     _moneyController.clear();
     _number = 0;
     await _updateMoney();
@@ -78,6 +99,7 @@ class _WalletPageState extends State<WalletPage> {
 
   void _addCard() async{
     _card += _number;
+    _addToDbIncome();
     _moneyController.clear();
     _number = 0;
     await _updateMoney();
@@ -86,6 +108,7 @@ class _WalletPageState extends State<WalletPage> {
   void _minusCash() async{
     if (_number <= _cash) {
       _cash -= _number;
+      _addToDbExpense();
       _moneyController.clear();
       await _updateMoney();
     } else {
@@ -99,6 +122,7 @@ class _WalletPageState extends State<WalletPage> {
   void _minusCard() async{
     if (_number <= _card) {
       _card -= _number;
+      _addToDbExpense();
       _moneyController.clear();
       await _updateMoney();
     } else {
@@ -131,8 +155,8 @@ class _WalletPageState extends State<WalletPage> {
     }
   }
 
-  void press(var value) {
-    _number = value;
+  double press(var value) {
+    return _number = value;
   }
 
   final _errorSnackBar = SnackBar(
@@ -423,12 +447,6 @@ class _WalletPageState extends State<WalletPage> {
       onPressed: () async {
         if (_number != 0) {
           _whichStoreSelectedToAdd();
-          final operation = OperationsCompanion(
-            operation: drift.Value(_incomeController.text),
-            value: drift.Value(_moneyController.value.text),
-            tag: const drift.Value(1),
-          );
-          _database.insertOperation(operation);
           Navigator.of(context, rootNavigator: true).pop('dialog');
         }
         else {
@@ -546,12 +564,6 @@ class _WalletPageState extends State<WalletPage> {
       onPressed: () async {
         if (_number != 0) {
           _whichStoreSelectedToDelete();
-          final operation = OperationsCompanion(
-            operation: drift.Value(_expenseController.text),
-            value: drift.Value(_moneyController.value.text),
-            tag: const drift.Value(0),
-          );
-          _database.insertOperation(operation);
           Navigator.of(context, rootNavigator: true).pop('dialog');
         }
         else {
