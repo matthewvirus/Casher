@@ -23,6 +23,8 @@ class _SignUpPageState extends State<SignUpPage>{
   late String _name;
   late String _surname;
 
+  final int minPassword = 6;
+
   bool _passwordVisibility = true;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   Future<void> addUser() async{
@@ -40,19 +42,11 @@ class _SignUpPageState extends State<SignUpPage>{
 
   void submit() async {
     await AuthService().signUpWithEmailAndPassword(_email, _password);
-    if (!_email.contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Row(
-                children: const <Widget>[
-                  Padding(padding: EdgeInsets.only(left: 2)),
-                  Icon(Icons.error, color: Colors.redAccent,),
-                  Padding(padding: EdgeInsets.only(right: 5)),
-                  Text('Неправильно введен e-mail!'),
-                ],
-              )
-          )
-      );
+    if (!_email.contains('@') || _email.contains(',')) {
+      showErrorSnackBar('Неправильно введен e-mail!');
+    }
+    else if (_password.length <= minPassword) {
+      showErrorSnackBar('Пароль должен содержать более 6 символов!');
     }
     else {
       addUser();
@@ -61,6 +55,19 @@ class _SignUpPageState extends State<SignUpPage>{
           MaterialPageRoute(builder: (context) => const Casher())
       );
     }
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showErrorSnackBar(String text) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          children: <Widget>[
+            const Padding(padding: EdgeInsets.only(left: 2)),
+            const Icon(Icons.error, color: Colors.redAccent,),
+            const Padding(padding: EdgeInsets.only(right: 5)),
+            Text(text),
+          ],
+        )
+    ));
   }
 
   @override
