@@ -12,7 +12,7 @@ class CategoryPage extends StatefulWidget {
 
 class _CategoryPageState extends State<CategoryPage> {
   late MyDatabase _database;
-  bool isChecked = false;
+  late int id;
 
   @override
   void initState() {
@@ -35,6 +35,22 @@ class _CategoryPageState extends State<CategoryPage> {
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: Colors.deepPurpleAccent,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: GestureDetector(
+              onTap: () {
+                showDeleteAlertDialog();
+              },
+              child: Icon(
+                CupertinoIcons.trash_fill,
+                color: selectedOperation.isNotEmpty
+                    ?Colors.deepPurpleAccent
+                    :Colors.transparent
+              ),
+            ),
+          )
+        ],
       ),
       backgroundColor: const Color(0xFFE7E1F1),
       body: FutureBuilder<List<Operation>>(
@@ -54,13 +70,13 @@ class _CategoryPageState extends State<CategoryPage> {
           return operationsList!.isEmpty ?const Center(child: Text("Нет последних операций")):ListView.builder(
             padding: const EdgeInsets.all(4),
             itemCount: operationsList!.length,
-            itemBuilder: (BuildContext context, int index) {
+            itemBuilder: (BuildContext context, index) {
               return GestureDetector(
                 onLongPress: () {
                   if (!selectedOperation.contains(index)) {
                     setState(() {
                       selectedOperation.add(index);
-                      isChecked = true;
+                      id = operationsList![selectedOperation.first].id;
                     });
                   }
                 },
@@ -68,7 +84,6 @@ class _CategoryPageState extends State<CategoryPage> {
                   if (selectedOperation.contains(index)) {
                     setState(() {
                       selectedOperation.removeWhere((element) => element == index);
-                      isChecked = false;
                     });
                   }
                 },
@@ -117,6 +132,75 @@ class _CategoryPageState extends State<CategoryPage> {
           );
         }
       ),
+    );
+  }
+
+  void showDeleteAlertDialog() {
+    Widget okButton = TextButton(
+      child: const Text(
+        "Подтвердить",
+        style:
+        TextStyle(
+            fontSize: 20,
+            color: Colors.deepPurpleAccent
+        ),
+      ),
+      onPressed: () async {
+        setState(() {
+          _database.deleteOperation(id);
+        });
+        Navigator.of(context, rootNavigator: true).pop('dialog');
+        selectedOperation = <int>[];
+      },
+    );
+    Widget cancelButton = TextButton(
+      child: const Text(
+        "Отмена",
+        style:
+        TextStyle(
+            fontSize: 20,
+            color: Colors.deepPurpleAccent
+        ),
+      ),
+      onPressed: () async {
+        Navigator.of(context, rootNavigator: true).pop('dialog');
+      },
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState){
+            return AlertDialog(
+              title: const Text(
+                'Удаление',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12))
+              ),
+              content: SizedBox(
+                height: 55,
+                width: 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
+                      'Вы действительно хотите удалить опреацию?'
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                cancelButton,
+                okButton,
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

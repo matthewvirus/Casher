@@ -79,7 +79,6 @@ class _SignUpPageState extends State<SignUpPage>{
                       text,
                       maxLines: 4,
                       textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.justify
                   )
               ),
             ],

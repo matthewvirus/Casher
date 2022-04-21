@@ -19,14 +19,6 @@ class MyDatabase extends _$MyDatabase {
     return await select(operations).get();
   }
 
-  Future<Operation> getOperation(int id) async{
-    return await (select(operations)..where((tbl) => tbl.id.equals(id))).getSingle();
-  }
-
-  Future<bool> updateOperation(OperationsCompanion entity) async {
-    return await update(operations).replace(entity);
-  }
-
   Future<int> insertOperation(OperationsCompanion entity) async {
     return await into(operations).insert(entity);
   }

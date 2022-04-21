@@ -57,7 +57,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       text,
                       maxLines: 4,
                       textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.justify
                   )
               ),
             ],
