@@ -183,6 +183,13 @@ class _WalletPageState extends State<WalletPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: const Text('Casher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.deepPurpleAccent,
+      ),
       backgroundColor: const Color(0xFFE7E1F1),
       body: _isLoading? circularBar(): Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -485,7 +492,7 @@ class _WalletPageState extends State<WalletPage> {
                   borderRadius: BorderRadius.all(Radius.circular(12))
               ),
               content: SizedBox(
-                height: 200,
+                height: 210,
                 width: 100,
                 child: Column(
                   children: <Widget>[
@@ -605,7 +612,7 @@ class _WalletPageState extends State<WalletPage> {
                   borderRadius: BorderRadius.all(Radius.circular(12))
               ),
               content: SizedBox(
-                height: 200,
+                height: 210,
                 width: 100,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

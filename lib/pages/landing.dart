@@ -13,15 +13,8 @@ class LandingPage extends StatelessWidget {
     final AuthUser? user = Provider.of<AuthUser?>(context);
     bool isLoggedIn = user != null;
 
-    return isLoggedIn ? Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text('Casher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.deepPurpleAccent,
-      ),
-      body: const BottomNavBar(),
+    return isLoggedIn ? const Scaffold(
+      body: BottomNavBar(),
     ) : const RegisterPage();
   }
 }

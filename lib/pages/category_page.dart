@@ -29,6 +29,13 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: const Text('Casher', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.deepPurpleAccent,
+      ),
       backgroundColor: const Color(0xFFE7E1F1),
       body: FutureBuilder<List<Operation>>(
         future: _database.getOperations(),
