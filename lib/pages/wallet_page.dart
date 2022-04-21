@@ -359,7 +359,7 @@ class _WalletPageState extends State<WalletPage> {
                         child: FloatingActionButton.extended(
                           onPressed: () {
                             setState(() {
-                              showAddAlertDialog(context);
+                              showAddAlertDialog();
                             });
                           },
                           shape: const RoundedRectangleBorder(
@@ -397,7 +397,7 @@ class _WalletPageState extends State<WalletPage> {
                         child: FloatingActionButton.extended(
                           onPressed: () {
                             setState((){
-                              showDeleteAlertDialog(context);
+                              showDeleteAlertDialog();
                             });
                           },
                           shape: const RoundedRectangleBorder(
@@ -435,7 +435,7 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
-  Future<void> showAddAlertDialog(BuildContext context) async {
+  void showAddAlertDialog() {
     Widget addButton = TextButton(
       child: const Text(
         "Добавить",
@@ -469,89 +469,92 @@ class _WalletPageState extends State<WalletPage> {
         }
       },
     );
-    AlertDialog alert = AlertDialog(
-      title: const Text(
-        "Доходы",
-        style: TextStyle(
-            fontWeight: FontWeight.bold
-        ),
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12))
-      ),
-      content: SizedBox(
-        height: 200,
-        width: 100,
-        child: Column(
-          children: <Widget>[
-            const Text(
-              'Введите сумму для добавления',
-            ),
-            TextFormField(
-              textAlign: TextAlign.center,
-              controller: _moneyController,
-              cursorColor: Colors.deepPurpleAccent,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  press(double.parse(value));
-                });
-              },
-            ),
-            const Padding(padding: EdgeInsets.only(top: 12)),
-            DropdownButton<String>(
-              value: _selectedStore,
-              icon: const Icon(Icons.arrow_drop_down_rounded),
-              elevation: 16,
-              style: const TextStyle(fontSize: 20, color: Colors.black),
-              underline: Container(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedStore = newValue!;
-                });
-              },
-              items: _moneyStores
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            TextField(
-              textAlign: TextAlign.start,
-              controller: _incomeController,
-              cursorColor: Colors.deepPurpleAccent,
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                label: Text('Введите комментарий'),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        addButton,
-      ],
-    );
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState){
+            return AlertDialog(
+              title: const Text(
+                "Доходы",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12))
+              ),
+              content: SizedBox(
+                height: 200,
+                width: 100,
+                child: Column(
+                  children: <Widget>[
+                    const Text(
+                      'Введите сумму для добавления',
+                    ),
+                    TextFormField(
+                      textAlign: TextAlign.center,
+                      controller: _moneyController,
+                      cursorColor: Colors.deepPurpleAccent,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          press(double.parse(value));
+                        });
+                      },
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 12)),
+                    DropdownButton<String>(
+                      value: _selectedStore,
+                      icon: const Icon(Icons.arrow_drop_down_rounded),
+                      elevation: 16,
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                      underline: Container(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedStore = newValue!;
+                        });
+                      },
+                      items: _moneyStores
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    TextField(
+                      textAlign: TextAlign.start,
+                      controller: _incomeController,
+                      cursorColor: Colors.deepPurpleAccent,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        label: Text('Введите комментарий'),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                addButton,
+              ],
+            );
+          },
+        );
       },
     );
   }
 
-  Future<void> showDeleteAlertDialog(BuildContext context) async {
+  void showDeleteAlertDialog() {
     Widget minusButton = TextButton(
       child: const Text(
         "Отнять",
@@ -586,85 +589,88 @@ class _WalletPageState extends State<WalletPage> {
         }
       },
     );
-    AlertDialog alert = AlertDialog(
-      title: const Text(
-        "Затраты",
-        style: TextStyle(
-            fontWeight: FontWeight.bold
-        ),
-      ),
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12))
-      ),
-      content: SizedBox(
-        height: 200,
-        width: 100,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Введите потраченную сумму',
-            ),
-            TextFormField(
-              textAlign: TextAlign.center,
-              controller: _moneyController,
-              cursorColor: Colors.deepPurpleAccent,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  press(double.parse(value));
-                });
-              },
-            ),
-            const Padding(padding: EdgeInsets.only(top: 12)),
-            DropdownButton<String>(
-              value: _selectedStore,
-              icon: const Icon(Icons.arrow_drop_down_rounded),
-              elevation: 16,
-              style: const TextStyle(fontSize: 20, color: Colors.black),
-              underline: Container(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedStore = newValue!;
-                });
-              },
-              items: _moneyStores
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            TextField(
-              textAlign: TextAlign.start,
-              controller: _expenseController,
-              cursorColor: Colors.deepPurpleAccent,
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  label: Text('Введите комментарий'),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
-                  ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        minusButton,
-      ],
-    );
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState){
+            return AlertDialog(
+              title: const Text(
+                "Затраты",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12))
+              ),
+              content: SizedBox(
+                height: 200,
+                width: 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Введите потраченную сумму',
+                    ),
+                    TextFormField(
+                      textAlign: TextAlign.center,
+                      controller: _moneyController,
+                      cursorColor: Colors.deepPurpleAccent,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          press(double.parse(value));
+                        });
+                      },
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 12)),
+                    DropdownButton<String>(
+                      value: _selectedStore,
+                      icon: const Icon(Icons.arrow_drop_down_rounded),
+                      elevation: 16,
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                      underline: Container(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedStore = newValue!;
+                        });
+                      },
+                      items: _moneyStores
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    TextField(
+                      textAlign: TextAlign.start,
+                      controller: _expenseController,
+                      cursorColor: Colors.deepPurpleAccent,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        label: Text('Введите комментарий'),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                minusButton,
+              ],
+            );
+          },
+        );
       },
     );
   }
