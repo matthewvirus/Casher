@@ -1,3 +1,4 @@
+import 'package:casher/Model/operations_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:casher/pages/wallet_page.dart';
@@ -19,6 +20,7 @@ class BottomNavBarScreenState extends State<BottomNavBar> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      selectedOperation = <int>[];
     });
   }
 
