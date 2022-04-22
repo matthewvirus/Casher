@@ -41,8 +41,8 @@ class _WalletPageState extends State<WalletPage> {
     });
     await docRef.get().then((snapshot){
       setState(() {
-        _cash = snapshot['cash'];
-        _card = snapshot['card'];
+        _cash = snapshot['cash'].toDouble();
+        _card = snapshot['card'].toDouble();
         _isLoading = false;
       });
     });
@@ -78,6 +78,7 @@ class _WalletPageState extends State<WalletPage> {
       tag: const drift.Value(1),
     );
     _database.insertOperation(operation);
+    _incomeController.clear();
   }
 
   void _addToDbExpense(){
@@ -87,6 +88,7 @@ class _WalletPageState extends State<WalletPage> {
       tag: const drift.Value(0),
     );
     _database.insertOperation(operation);
+    _expenseController.clear();
   }
 
   void _addCash() async{
