@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'database.dart';
-
-// **************************************************************************
-// MoorGenerator
-// **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Operation extends DataClass implements Insertable<Operation> {
