@@ -21,4 +21,4 @@ P.S. Screenshots:
 
 P.P.S. That's not end, in future I will add some new features :)
 
-Download link: <b>https://drive.google.com/file/d/1diYBe6TnW1-WN6m5dtEijXXs6xeSzXbB/view?usp=sharing</b>
+Android apk download link: <b>https://drive.google.com/file/d/1diYBe6TnW1-WN6m5dtEijXXs6xeSzXbB/view?usp=sharing</b>
